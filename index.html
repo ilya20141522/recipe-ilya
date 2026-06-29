@@ -20,7 +20,7 @@
             margin: 0;
         }
         .app-container {
-            max-width: 720px;
+            max-width: 760px;
             width: 100%;
             background: rgba(255, 250, 240, 0.75);
             backdrop-filter: blur(4px);
@@ -92,6 +92,41 @@
         .add-row input::placeholder {
             color: #b3a89a;
             font-weight: 300;
+        }
+        .star-selector {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            padding: 4px 16px 4px 12px;
+            border-radius: 60px;
+            border: 1px solid #d9d0c2;
+            flex: 0 1 auto;
+        }
+        .star-selector label {
+            font-size: 0.85rem;
+            color: #6f6658;
+            margin-right: 4px;
+        }
+        .star-selector .stars-display {
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            color: #f5b342;
+            cursor: pointer;
+            user-select: none;
+            min-width: 100px;
+            text-align: center;
+        }
+        .star-selector input[type="range"] {
+            width: 80px;
+            accent-color: #f5b342;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+        .star-selector input[type="range"]:focus {
+            box-shadow: none;
         }
         .btn {
             background: #e8e0d5;
@@ -205,6 +240,8 @@
             border-radius: 60px;
             transition: 0.1s;
             border: 1px solid transparent;
+            flex-wrap: wrap;
+            gap: 6px;
         }
         .recipe-item:hover {
             background: #fcf9f4;
@@ -213,8 +250,9 @@
         .recipe-info {
             display: flex;
             flex-wrap: wrap;
-            align-items: baseline;
+            align-items: center;
             gap: 6px 16px;
+            flex: 1;
         }
         .recipe-name {
             font-weight: 500;
@@ -236,6 +274,16 @@
         .recipe-tag.汤 { background: #c8dce6; color: #1f4b5e; }
         .recipe-tag.主食 { background: #ede0b0; color: #6b5a1f; }
         .recipe-tag.其他 { background: #e3d9d9; color: #4f4545; }
+        .recipe-stars {
+            color: #f5b342;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            min-width: 70px;
+        }
+        .recipe-stars .empty-star {
+            color: #ddd6cc;
+        }
         .recipe-delete {
             background: transparent;
             border: none;
@@ -307,6 +355,8 @@
             .filter-bar { width: 100%; justify-content: center; }
             .random-section { flex-direction: column; align-items: stretch; gap: 12px; padding: 18px 16px; }
             .random-pick { justify-content: center; }
+            .star-selector { flex: 1 1 100%; justify-content: center; }
+            .star-selector input[type="range"] { width: 60px; }
         }
     </style>
 </head>
@@ -329,6 +379,11 @@
                 <option value="主食">🍚 主食</option>
                 <option value="其他">🧂 其他</option>
             </select>
+            <div class="star-selector">
+                <label>⭐</label>
+                <span class="stars-display" id="starDisplay">★★★</span>
+                <input type="range" id="starSlider" min="0.5" max="5" step="0.5" value="3" />
+            </div>
             <button class="btn btn-primary" id="addBtn">➕ 添加</button>
         </div>
         <div class="action-bar">
@@ -354,7 +409,6 @@
             <span id="filterHint">全部</span>
         </div>
         <div id="recipeList">
-            <!-- 动态渲染 -->
             <div class="empty-state">
                 <span>🍽️</span>
                 还没有菜谱，快添加一道拿手菜吧！
@@ -381,6 +435,8 @@
         // DOM 引用
         const dishNameInput = document.getElementById('dishName');
         const dishCategorySelect = document.getElementById('dishCategory');
+        const starSlider = document.getElementById('starSlider');
+        const starDisplay = document.getElementById('starDisplay');
         const addBtn = document.getElementById('addBtn');
         const filterSelect = document.getElementById('filterSelect');
         const clearFilterBtn = document.getElementById('clearFilterBtn');
@@ -391,32 +447,53 @@
         const countDisplay = document.getElementById('countDisplay');
         const statsDisplay = document.getElementById('statsDisplay');
 
+        // ---------- 星星辅助 ----------
+        function renderStarsHtml(rating) {
+            const full = Math.floor(rating);
+            const half = rating % 1 >= 0.5 ? 1 : 0;
+            const empty = 5 - full - half;
+            return '★'.repeat(full) + (half ? '½' : '') + '<span class="empty-star">' + '★'.repeat(empty) + '</span>';
+        }
+
+        function updateStarDisplay(val) {
+            const num = parseFloat(val);
+            const full = Math.floor(num);
+            const half = num % 1 >= 0.5 ? 1 : 0;
+            const empty = 5 - full - half;
+            let str = '★'.repeat(full) + (half ? '½' : '') + '<span style="color:#ddd6cc;">' + '★'.repeat(empty) + '</span>';
+            starDisplay.innerHTML = str;
+        }
+
+        starSlider.addEventListener('input', function() {
+            updateStarDisplay(this.value);
+        });
+        // 初始化星星
+        updateStarDisplay(starSlider.value);
+
         // ---------- 存储 ----------
         function loadFromStorage() {
             const stored = localStorage.getItem('recipeBook');
             if (stored) {
                 try {
                     recipes = JSON.parse(stored);
-                    // 保证每个菜都有 category (旧数据兼容)
                     recipes = recipes.filter(r => r && typeof r.name === 'string')
                         .map(r => ({
                             name: r.name.trim(),
-                            category: r.category || '其他'
+                            category: r.category || '其他',
+                            rating: typeof r.rating === 'number' ? r.rating : 3
                         }));
                 } catch (e) {
                     recipes = [];
                 }
             } else {
-                // 初始化示例数据（更丰富一些）
                 recipes = [
-                    { name: '红烧肉', category: '荤' },
-                    { name: '番茄炒蛋', category: '素' },
-                    { name: '紫菜蛋花汤', category: '汤' },
-                    { name: '蛋炒饭', category: '主食' },
-                    { name: '凉拌黄瓜', category: '素' },
+                    { name: '红烧肉', category: '荤', rating: 4.5 },
+                    { name: '番茄炒蛋', category: '素', rating: 4 },
+                    { name: '紫菜蛋花汤', category: '汤', rating: 3.5 },
+                    { name: '蛋炒饭', category: '主食', rating: 3 },
+                    { name: '凉拌黄瓜', category: '素', rating: 2.5 },
                 ];
             }
-            // 去重（保留第一个）
             const seen = new Set();
             recipes = recipes.filter(r => {
                 const key = r.name + '|' + r.category;
@@ -443,7 +520,6 @@
             const total = recipes.length;
             const filteredCount = filtered.length;
 
-            // 更新计数
             countDisplay.textContent = total + '道';
             statsDisplay.textContent = `📊 ${filteredCount} / ${total} 道`;
             filterHint.textContent = currentFilter === '全部' ? '全部' : currentFilter;
@@ -458,14 +534,15 @@
             }
 
             let html = '';
-            filtered.forEach((item, index) => {
-                // 为了删除，使用原始索引(但要小心过滤后索引和原始不一致, 存name+category作为唯一key)
+            filtered.forEach((item) => {
                 const categoryClass = item.category || '其他';
+                const starsHtml = renderStarsHtml(item.rating || 3);
                 html += `
                     <div class="recipe-item" data-name="${escapeHtml(item.name)}" data-category="${escapeHtml(item.category)}">
                         <div class="recipe-info">
                             <span class="recipe-name">${escapeHtml(item.name)}</span>
                             <span class="recipe-tag ${categoryClass}">${escapeHtml(item.category)}</span>
+                            <span class="recipe-stars">${starsHtml}</span>
                         </div>
                         <button class="recipe-delete" data-name="${escapeHtml(item.name)}" data-category="${escapeHtml(item.category)}" title="删除">✕</button>
                     </div>
@@ -473,7 +550,6 @@
             });
             recipeListEl.innerHTML = html;
 
-            // 绑定删除事件 (委托)
             recipeListEl.querySelectorAll('.recipe-delete').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -484,7 +560,6 @@
             });
         }
 
-        // 简单的转义
         function escapeHtml(text) {
             if (!text) return '';
             const map = {
@@ -501,21 +576,20 @@
         function addRecipe() {
             let name = dishNameInput.value.trim();
             const category = dishCategorySelect.value;
+            const rating = parseFloat(starSlider.value);
             if (!name) {
                 alert('请输入菜名 🥺');
                 return;
             }
-            // 重名+同分类检查
             const exists = recipes.some(r => r.name === name && r.category === category);
             if (exists) {
                 alert(`“${name}” 已在 ${category} 分类中，不必重复添加`);
                 return;
             }
-            recipes.push({ name, category });
+            recipes.push({ name, category, rating });
             saveToStorage();
             dishNameInput.value = '';
             dishNameInput.focus();
-            // 重置随机结果占位
             randomResult.textContent = '✨ 已更新';
             randomResult.className = 'random-result';
             setTimeout(() => {
@@ -532,7 +606,6 @@
             if (newRecipes.length === recipes.length) return;
             recipes = newRecipes;
             saveToStorage();
-            // 如果当前筛选下没有数据, 自动切回全部
             const filtered = getFilteredList();
             if (filtered.length === 0 && currentFilter !== '全部') {
                 currentFilter = '全部';
@@ -554,7 +627,8 @@
             }
             const randomIndex = Math.floor(Math.random() * filtered.length);
             const picked = filtered[randomIndex];
-            randomResult.textContent = `🍳 ${picked.name} (${picked.category})`;
+            const stars = renderStarsHtml(picked.rating || 3);
+            randomResult.innerHTML = `🍳 ${picked.name} (${picked.category}) ${stars}`;
             randomResult.className = 'random-result';
         }
 
@@ -562,7 +636,6 @@
             currentFilter = category;
             filterSelect.value = category;
             render();
-            // 随机结果提示重置（但保留文字）
             if (recipes.length > 0) {
                 const filtered = getFilteredList();
                 if (filtered.length === 0) {
@@ -583,30 +656,14 @@
 
         function updateUI() {
             render();
-            // 如果当前筛选为空且不是全部，自动重置
-            const filtered = getFilteredList();
-            if (filtered.length === 0 && currentFilter !== '全部' && recipes.length > 0) {
-                // 但不要自动切换，用户可以手动清除
-            }
             if (recipes.length === 0) {
                 randomResult.textContent = '🍽️ 添加第一道菜';
                 randomResult.className = 'random-result placeholder';
-            } else {
-                // 但如果是筛选状态无结果，已经在setFilter处理
-                if (getFilteredList().length === 0 && currentFilter !== '全部') {
-                    // 保留提示
-                } else if (randomResult.textContent.includes('无') || randomResult.textContent.includes('还没') || randomResult.textContent === '点一下试试' || randomResult.textContent === '✨ 已更新' || randomResult.textContent === '🎯 筛选已切换') {
-                    // 保持
-                } else {
-                    // 保留上次随机结果
-                }
             }
         }
 
-        // ---------- 重置筛选 ----------
         function clearFilter() {
             if (currentFilter === '全部') {
-                // 如果已经是全部，但可能随机提示被占，重置随机提示
                 if (recipes.length > 0) {
                     randomResult.textContent = '点一下试试';
                     randomResult.className = 'random-result placeholder';
@@ -614,14 +671,13 @@
                 return;
             }
             setFilter('全部');
-            // 重置随机提示
             if (recipes.length > 0) {
                 randomResult.textContent = '点一下试试';
                 randomResult.className = 'random-result placeholder';
             }
         }
 
-        // ---------- 初始化事件 ----------
+        // ---------- 初始化 ----------
         function init() {
             loadFromStorage();
 
@@ -635,23 +691,14 @@
             });
 
             clearFilterBtn.addEventListener('click', clearFilter);
-
             randomBtn.addEventListener('click', randomPick);
-
-            // 点击随机结果也可以触发随机（小彩蛋）
             randomResult.addEventListener('click', function() {
                 if (recipes.length > 0) randomPick();
-            });
-
-            // 额外：点击列表空白区域清除焦点
-            document.addEventListener('click', function(e) {
-                // 无特殊
             });
 
             updateUI();
         }
 
-        // 启动
         init();
     })();
 </script>
