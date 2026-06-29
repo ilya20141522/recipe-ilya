@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宝奇物流 2025 增长机会分析报告</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root { --primary: #1a56db; --accent: #f59e0b; --bg: #f8fafc; --card: #fff; --text: #1e293b; --muted: #64748b; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
+  .header { background: linear-gradient(135deg, #1a56db 0%, #1e40af 100%); color: white; padding: 48px 32px; border-radius: 16px; margin-bottom: 32px; }
+  .header h1 { font-size: 28px; margin-bottom: 8px; }
+  .header .meta { opacity: 0.8; font-size: 14px; }
+  .card { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .card h2 { font-size: 20px; margin-bottom: 16px; color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+  .card h3 { font-size: 16px; margin: 16px 0 8px; color: #334155; }
+  .chart-wrapper { height: 400px; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+  th { background: #f1f5f9; font-weight: 600; color: #475569; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .badge-p0 { background: #dc2626; color: white; }
+  .badge-p1 { background: #f59e0b; color: white; }
+  .badge-p2 { background: #64748b; color: white; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .stat-box { background: #f1f5f9; border-radius: 8px; padding: 16px; text-align: center; }
+  .stat-box .num { font-size: 24px; font-weight: 700; color: var(--primary); }
+  .stat-box .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .growth-positive { color: #16a34a; font-weight: 600; }
+  .growth-negative { color: #dc2626; font-weight: 600; }
+  .tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin: 2px; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>🚚 宝奇物流 2025 增长机会分析报告</h1>
+  <p class="meta">数据源：华为云 DWS (dws-ods) · dwd.dwd_transport_detail_info · 生成日期：2026-06-29</p>
+</div>
+
+<div class="grid-2">
+  <div class="stat-box"><div class="num">427.5万</div><div class="label">2025年总运单量</div></div>
+  <div class="stat-box"><div class="num">143.7亿</div><div class="label">总运费收入(元)</div></div>
+  <div class="stat-box"><div class="num">+184%</div><div class="label">同比增长</div></div>
+  <div class="stat-box"><div class="num">3,022</div><div class="label">活跃货主数</div></div>
+</div>
+
+<div class="card">
+  <h2>一、品类增速矩阵 TOP 15</h2>
+  <div class="chart-wrapper"><canvas id="chartGrowthMatrix"></canvas></div>
+  <p>快递(+481%)和百货(+266%)为双引擎，占平台运单20%。<strong class="growth-positive">食品(+2,345%)</strong>增速最高。</p>
+</div>
+
+<div class="card">
+  <h2>二、高增长潜力品类（2024年<5000单→2025年爆发）</h2>
+  <div class="chart-wrapper"><canvas id="chartHighGrowth"></canvas></div>
+  <p>翻斗车(+31,300%,均价17,723元)、电芯(+5,411%)、铝棒(+34,719%)、光伏玻璃(+1,855%)为四大新赛道。</p>
+</div>
+
+<div class="card">
+  <h2>三、高价值品类 TOP 8</h2>
+  <table>
+    <thead><tr><th>品类</th><th>2025单量</th><th>均价(元/单)</th><th>同比增速</th><th>2025营收(万)</th><th>特征</th></tr></thead>
+    <tbody>
+      <tr><td>翻斗车</td><td>1,256</td><td>17,723</td><td class="growth-positive">+31,300%</td><td>2,226</td><td><span class="tag">规模×价值×增长三优</span></td></tr>
+      <tr><td>棉纱</td><td>4,438</td><td>16,583</td><td class="growth-positive">+708%</td><td>7,360</td><td><span class="tag">高单量×高增长</span></td></tr>
+      <tr><td>散装水泥</td><td>642</td><td>14,609</td><td class="growth-positive">+2,468%</td><td>938</td><td><span class="tag">基建相关</span></td></tr>
+      <tr><td>挖机</td><td>2,697</td><td>10,752</td><td class="growth-positive">+19,164%</td><td>2,900</td><td><span class="tag">工程设备</span></td></tr>
+      <tr><td>尼龙66</td><td>1,060</td><td>10,825</td><td class="growth-positive">+1,028%</td><td>1,147</td><td><span class="tag">工业材料</span></td></tr>
+      <tr><td>环保材料</td><td>529</td><td>10,484</td><td class="growth-positive">+5,190%</td><td>555</td><td><span class="tag">环保趋势</span></td></tr>
+      <tr><td>光伏玻璃</td><td>23,676</td><td>3,579</td><td class="growth-positive">+1,855%</td><td>8,472</td><td><span class="tag">新能源</span><span class="tag">已规模化</span></td></tr>
+      <tr><td>食品</td><td>172,806</td><td>1,606</td><td class="growth-positive">+2,345%</td><td>27,765</td><td><span class="tag">P0优先</span><span class="tag">大规模高增长</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>四、区域品类集中度</h2>
+  <table>
+    <thead><tr><th>省份</th><th>TOP1 品类</th><th>占比</th><th>TOP2</th><th>TOP3</th></tr></thead>
+    <tbody>
+      <tr><td>山西</td><td>煤</td><td>34.5%</td><td>煤炭 16.8%</td><td>快递 4.0%</td></tr>
+      <tr><td>陕西</td><td>煤</td><td>30.1%</td><td>煤炭 12.5%</td><td>混煤 5.8%</td></tr>
+      <tr><td>上海市</td><td>食品</td><td>15.3%</td><td>百货 8.9%</td><td>快递 7.3%</td></tr>
+      <tr><td>四川</td><td>百货</td><td>12.9%</td><td>快递 6.8%</td><td>食品 6.0%</td></tr>
+      <tr><td>江苏</td><td>快递</td><td>15.1%</td><td>百货 7.2%</td><td>煤 6.8%</td></tr>
+      <tr><td>广东</td><td>快递</td><td>17.8%</td><td>百货 7.5%</td><td>配件 4.2%</td></tr>
+      <tr><td>河南</td><td>煤</td><td>14.2%</td><td>百货 8.0%</td><td>食品 6.7%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>五、货主偏好迁移</h2>
+  <table>
+    <thead><tr><th>品类</th><th>2025货主</th><th>2024货主</th><th>增长</th><th>2025单量</th></tr></thead>
+    <tbody>
+      <tr><td>零食</td><td>306</td><td>12</td><td class="growth-positive">+2,450%</td><td>30,550</td></tr>
+      <tr><td>食品</td><td>398</td><td>87</td><td class="growth-positive">+357%</td><td>172,806</td></tr>
+      <tr><td>配件</td><td>336</td><td>74</td><td class="growth-positive">+354%</td><td>88,113</td></tr>
+      <tr><td>家电</td><td>156</td><td>37</td><td class="growth-positive">+322%</td><td>40,473</td></tr>
+      <tr><td>设备</td><td>275</td><td>72</td><td class="growth-positive">+282%</td><td>84,657</td></tr>
+      <tr><td>肉类</td><td>87</td><td>28</td><td class="growth-positive">+211%</td><td>21,973</td></tr>
+      <tr><td>快递</td><td>695</td><td>278</td><td class="growth-positive">+150%</td><td>414,763</td></tr>
+    </tbody>
+  </table>
+  <p>新货主大量涌入食品/配件/家电赛道，<strong>网络效应正在形成</strong>。</p>
+</div>
+
+<div class="card">
+  <h2>六、增长机会总结</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;">
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span class="badge badge-p0">P0</span> <strong>立即投入</strong>
+      </div>
+      <p style="font-size:13px;"><strong>食品</strong>: 17万单,+2,345%,货主+357%<br>→ 建食品运力</p>
+      <p style="font-size:13px;margin-top:8px;"><strong>配件/设备</strong>: 各8.8万单,+943%<br>→ 深耕B2B</p>
+      <p style="font-size:13px;margin-top:8px;"><strong>快递</strong>: 41.5万单,+481%<br>→ 保网络密度</p>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span class="badge badge-p1">P1</span> <strong>中期布局</strong>
+      </div>
+      <p style="font-size:13px;"><strong>光伏玻璃</strong>: 23,676单,+1,855% 新能源</p>
+      <p style="font-size:13px;margin-top:8px;"><strong>翻斗车/挖机</strong>: 均价1-1.7万/单</p>
+      <p style="font-size:13px;margin-top:8px;"><strong>电芯/电池</strong>: +5,411%</p>
+      <p style="font-size:13px;margin-top:8px;"><strong>棉纱</strong>: 均价16,583,+708%</p>
+    </div>
+    <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span class="badge badge-p2">P2</span> <strong>防御关注</strong>
+      </div>
+      <p style="font-size:13px;"><span class="growth-negative">瓷砖 -19%</span> 排查</p>
+      <p style="font-size:13px;margin-top:8px;"><span class="growth-negative">京东快递 -43%</span> 排查</p>
+      <p style="font-size:13px;margin-top:8px;"><span class="growth-negative">硅 -73%、主焦煤 -59%</span> 维护</p>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;color:var(--muted);font-size:12px;padding:24px;">
+  报告生成：2026-06-29 · 数据源：华为云 DWS (dws-ods) · dwd.dwd_transport_detail_info
+</div>
+
+</div>
+
+<script>
+new Chart(document.getElementById('chartGrowthMatrix'), {
+  type: 'bar',
+  data: {
+    labels: ['快递','百货','煤','食品','饮料','配件','设备','零食','光伏玻璃','纸箱','家电','啤酒','汽车配件','钢材','砂石'],
+    datasets: [{ label: '2025运单量', data: [414763,390339,288793,172806,133487,88113,84657,30550,23676,23403,40473,61447,59867,22257,9615], backgroundColor: '#1a56db', borderRadius: 4 }]
+  },
+  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => v >= 10000 ? (v/10000).toFixed(0)+'万' : v } } } }
+});
+new Chart(document.getElementById('chartHighGrowth'), {
+  type: 'bar',
+  data: {
+    labels: ['翻斗车','电芯','铝棒','铜板','餐饮食材','光伏玻璃','棉布','食品'],
+    datasets: [{ label: '2025运单量', data: [1256,8376,7312,5893,6428,23676,985,172806], backgroundColor: '#f59e0b', borderRadius: 4 }]
+  },
+  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { afterLabel: ctx => { const g = [31300,5411,34719,73563,5852,1855,98400,2345][ctx.dataIndex]; return '同比增长: +'+g.toLocaleString()+'%'; } } } }, scales: { x: { ticks: { callback: v => v >= 10000 ? (v/10000).toFixed(0)+'万' : v } } } }
+});
+</script>
+</body>
+</html>
