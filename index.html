@@ -1,170 +1,659 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>宝奇物流 2025 增长机会分析报告</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<style>
-  :root { --primary: #1a56db; --accent: #f59e0b; --bg: #f8fafc; --card: #fff; --text: #1e293b; --muted: #64748b; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-  .container { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
-  .header { background: linear-gradient(135deg, #1a56db 0%, #1e40af 100%); color: white; padding: 48px 32px; border-radius: 16px; margin-bottom: 32px; }
-  .header h1 { font-size: 28px; margin-bottom: 8px; }
-  .header .meta { opacity: 0.8; font-size: 14px; }
-  .card { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .card h2 { font-size: 20px; margin-bottom: 16px; color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
-  .card h3 { font-size: 16px; margin: 16px 0 8px; color: #334155; }
-  .chart-wrapper { height: 400px; margin: 16px 0; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-  th { background: #f1f5f9; font-weight: 600; color: #475569; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-  .badge-p0 { background: #dc2626; color: white; }
-  .badge-p1 { background: #f59e0b; color: white; }
-  .badge-p2 { background: #64748b; color: white; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .stat-box { background: #f1f5f9; border-radius: 8px; padding: 16px; text-align: center; }
-  .stat-box .num { font-size: 24px; font-weight: 700; color: var(--primary); }
-  .stat-box .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .growth-positive { color: #16a34a; font-weight: 600; }
-  .growth-negative { color: #dc2626; font-weight: 600; }
-  .tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin: 2px; }
-  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍳 私房菜谱记录器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f8f4ec 0%, #f0ebe1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .app-container {
+            max-width: 720px;
+            width: 100%;
+            background: rgba(255, 250, 240, 0.75);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 48px;
+            padding: 28px 24px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 245, 230, 0.5);
+            transition: 0.2s;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #3e3a32;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.5px;
+        }
+        h1 small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #8a7f72;
+            margin-left: auto;
+            background: #e8e0d5;
+            padding: 4px 14px;
+            border-radius: 40px;
+            letter-spacing: 0;
+        }
+        .subhead {
+            color: #6f6658;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            border-left: 4px solid #d8cdbc;
+            padding-left: 14px;
+            background: rgba(220, 210, 195, 0.2);
+            border-radius: 0 12px 12px 0;
+        }
+        .add-section {
+            background: #fcf9f4;
+            border-radius: 32px;
+            padding: 20px 20px 22px;
+            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.02);
+            margin-bottom: 28px;
+            border: 1px solid #ede7dd;
+        }
+        .add-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 10px;
+            align-items: center;
+        }
+        .add-row input, .add-row select {
+            flex: 1 1 130px;
+            padding: 12px 16px;
+            border: 1px solid #d9d0c2;
+            border-radius: 60px;
+            background: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.15s;
+            color: #2f2b26;
+        }
+        .add-row input:focus, .add-row select:focus {
+            border-color: #b8a48c;
+            box-shadow: 0 0 0 3px rgba(184, 164, 140, 0.2);
+        }
+        .add-row input::placeholder {
+            color: #b3a89a;
+            font-weight: 300;
+        }
+        .btn {
+            background: #e8e0d5;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #3e3a32;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid transparent;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            flex: 0 1 auto;
+        }
+        .btn-primary {
+            background: #3e3a32;
+            color: #fcf9f4;
+            border-color: #3e3a32;
+            flex: 1 0 auto;
+        }
+        .btn-primary:hover {
+            background: #2f2b26;
+            transform: scale(0.97);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #ccc3b5;
+        }
+        .btn-outline:hover {
+            background: #ede7dd;
+        }
+        .btn-danger {
+            background: #e8d7d2;
+            color: #7f4e45;
+            border-color: #dccac4;
+        }
+        .btn-danger:hover {
+            background: #dfc7c0;
+        }
+        .btn-success {
+            background: #c7d5c0;
+            color: #2f4d3a;
+            border-color: #b3c7ab;
+        }
+        .btn-success:hover {
+            background: #b8cbb0;
+        }
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            background: #f6f1ea;
+            padding: 8px 12px 8px 18px;
+            border-radius: 60px;
+        }
+        .filter-bar label {
+            font-size: 0.9rem;
+            color: #5f5547;
+            font-weight: 450;
+        }
+        .filter-bar select {
+            background: white;
+            border: 1px solid #d5cbbc;
+            border-radius: 40px;
+            padding: 6px 16px 6px 14px;
+            font-size: 0.9rem;
+            outline: none;
+            color: #2f2b26;
+        }
+        .recipe-list {
+            margin: 20px 0 18px;
+            background: rgba(255, 250, 240, 0.5);
+            border-radius: 28px;
+            padding: 6px 6px 6px 6px;
+            min-height: 160px;
+        }
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 14px 4px 18px;
+            font-size: 0.85rem;
+            color: #887e70;
+            letter-spacing: 0.3px;
+            border-bottom: 1px dashed #e0d7cb;
+            margin-bottom: 6px;
+        }
+        .list-header span:last-child {
+            opacity: 0.7;
+        }
+        .recipe-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px 10px 18px;
+            margin: 4px 0;
+            background: rgba(255, 252, 248, 0.7);
+            border-radius: 60px;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .recipe-item:hover {
+            background: #fcf9f4;
+            border-color: #e3d9cd;
+        }
+        .recipe-info {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 6px 16px;
+        }
+        .recipe-name {
+            font-weight: 500;
+            font-size: 1.05rem;
+            color: #2f2b26;
+        }
+        .recipe-tag {
+            background: #e8e0d5;
+            padding: 2px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #4d453c;
+            letter-spacing: 0.3px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .recipe-tag.荤 { background: #f0d5c4; color: #6d3f2e; }
+        .recipe-tag.素 { background: #d4e0c8; color: #2f543a; }
+        .recipe-tag.汤 { background: #c8dce6; color: #1f4b5e; }
+        .recipe-tag.主食 { background: #ede0b0; color: #6b5a1f; }
+        .recipe-tag.其他 { background: #e3d9d9; color: #4f4545; }
+        .recipe-delete {
+            background: transparent;
+            border: none;
+            color: #b6a89b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 40px;
+            transition: 0.1s;
+            line-height: 1;
+        }
+        .recipe-delete:hover {
+            background: #f0e3dc;
+            color: #8f6a5c;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 42px 16px 38px;
+            color: #aa9f90;
+            font-size: 0.98rem;
+        }
+        .empty-state span {
+            font-size: 2.8rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .random-section {
+            background: #f6f1ea;
+            border-radius: 60px;
+            padding: 8px 8px 8px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+            border: 1px solid #e7dfd4;
+        }
+        .random-pick {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .random-result {
+            font-weight: 500;
+            color: #2f2b26;
+            background: white;
+            padding: 6px 20px;
+            border-radius: 60px;
+            font-size: 1rem;
+            min-width: 120px;
+            box-shadow: inset 0 0 0 1px #e0d7cb;
+        }
+        .random-result.placeholder {
+            color: #b9aea0;
+            font-weight: 400;
+        }
+        .stats {
+            font-size: 0.8rem;
+            color: #7f7567;
+            background: #e8e0d5;
+            padding: 4px 14px;
+            border-radius: 40px;
+        }
+        @media (max-width: 550px) {
+            .app-container { padding: 20px 16px; }
+            .add-row input, .add-row select { flex: 1 1 100%; }
+            .btn-primary { flex: 1 1 100%; }
+            .filter-bar { width: 100%; justify-content: center; }
+            .random-section { flex-direction: column; align-items: stretch; gap: 12px; padding: 18px 16px; }
+            .random-pick { justify-content: center; }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
+<div class="app-container" id="app">
+    <h1>
+        🥘 菜谱记录器
+        <small id="countDisplay">0道</small>
+    </h1>
+    <div class="subhead">📋 记录你拿手的 · 随机翻牌解决“今天吃什么”</div>
 
-<div class="header">
-  <h1>🚚 宝奇物流 2025 增长机会分析报告</h1>
-  <p class="meta">数据源：华为云 DWS (dws-ods) · dwd.dwd_transport_detail_info · 生成日期：2026-06-29</p>
-</div>
-
-<div class="grid-2">
-  <div class="stat-box"><div class="num">427.5万</div><div class="label">2025年总运单量</div></div>
-  <div class="stat-box"><div class="num">143.7亿</div><div class="label">总运费收入(元)</div></div>
-  <div class="stat-box"><div class="num">+184%</div><div class="label">同比增长</div></div>
-  <div class="stat-box"><div class="num">3,022</div><div class="label">活跃货主数</div></div>
-</div>
-
-<div class="card">
-  <h2>一、品类增速矩阵 TOP 15</h2>
-  <div class="chart-wrapper"><canvas id="chartGrowthMatrix"></canvas></div>
-  <p>快递(+481%)和百货(+266%)为双引擎，占平台运单20%。<strong class="growth-positive">食品(+2,345%)</strong>增速最高。</p>
-</div>
-
-<div class="card">
-  <h2>二、高增长潜力品类（2024年<5000单→2025年爆发）</h2>
-  <div class="chart-wrapper"><canvas id="chartHighGrowth"></canvas></div>
-  <p>翻斗车(+31,300%,均价17,723元)、电芯(+5,411%)、铝棒(+34,719%)、光伏玻璃(+1,855%)为四大新赛道。</p>
-</div>
-
-<div class="card">
-  <h2>三、高价值品类 TOP 8</h2>
-  <table>
-    <thead><tr><th>品类</th><th>2025单量</th><th>均价(元/单)</th><th>同比增速</th><th>2025营收(万)</th><th>特征</th></tr></thead>
-    <tbody>
-      <tr><td>翻斗车</td><td>1,256</td><td>17,723</td><td class="growth-positive">+31,300%</td><td>2,226</td><td><span class="tag">规模×价值×增长三优</span></td></tr>
-      <tr><td>棉纱</td><td>4,438</td><td>16,583</td><td class="growth-positive">+708%</td><td>7,360</td><td><span class="tag">高单量×高增长</span></td></tr>
-      <tr><td>散装水泥</td><td>642</td><td>14,609</td><td class="growth-positive">+2,468%</td><td>938</td><td><span class="tag">基建相关</span></td></tr>
-      <tr><td>挖机</td><td>2,697</td><td>10,752</td><td class="growth-positive">+19,164%</td><td>2,900</td><td><span class="tag">工程设备</span></td></tr>
-      <tr><td>尼龙66</td><td>1,060</td><td>10,825</td><td class="growth-positive">+1,028%</td><td>1,147</td><td><span class="tag">工业材料</span></td></tr>
-      <tr><td>环保材料</td><td>529</td><td>10,484</td><td class="growth-positive">+5,190%</td><td>555</td><td><span class="tag">环保趋势</span></td></tr>
-      <tr><td>光伏玻璃</td><td>23,676</td><td>3,579</td><td class="growth-positive">+1,855%</td><td>8,472</td><td><span class="tag">新能源</span><span class="tag">已规模化</span></td></tr>
-      <tr><td>食品</td><td>172,806</td><td>1,606</td><td class="growth-positive">+2,345%</td><td>27,765</td><td><span class="tag">P0优先</span><span class="tag">大规模高增长</span></td></tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="card">
-  <h2>四、区域品类集中度</h2>
-  <table>
-    <thead><tr><th>省份</th><th>TOP1 品类</th><th>占比</th><th>TOP2</th><th>TOP3</th></tr></thead>
-    <tbody>
-      <tr><td>山西</td><td>煤</td><td>34.5%</td><td>煤炭 16.8%</td><td>快递 4.0%</td></tr>
-      <tr><td>陕西</td><td>煤</td><td>30.1%</td><td>煤炭 12.5%</td><td>混煤 5.8%</td></tr>
-      <tr><td>上海市</td><td>食品</td><td>15.3%</td><td>百货 8.9%</td><td>快递 7.3%</td></tr>
-      <tr><td>四川</td><td>百货</td><td>12.9%</td><td>快递 6.8%</td><td>食品 6.0%</td></tr>
-      <tr><td>江苏</td><td>快递</td><td>15.1%</td><td>百货 7.2%</td><td>煤 6.8%</td></tr>
-      <tr><td>广东</td><td>快递</td><td>17.8%</td><td>百货 7.5%</td><td>配件 4.2%</td></tr>
-      <tr><td>河南</td><td>煤</td><td>14.2%</td><td>百货 8.0%</td><td>食品 6.7%</td></tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="card">
-  <h2>五、货主偏好迁移</h2>
-  <table>
-    <thead><tr><th>品类</th><th>2025货主</th><th>2024货主</th><th>增长</th><th>2025单量</th></tr></thead>
-    <tbody>
-      <tr><td>零食</td><td>306</td><td>12</td><td class="growth-positive">+2,450%</td><td>30,550</td></tr>
-      <tr><td>食品</td><td>398</td><td>87</td><td class="growth-positive">+357%</td><td>172,806</td></tr>
-      <tr><td>配件</td><td>336</td><td>74</td><td class="growth-positive">+354%</td><td>88,113</td></tr>
-      <tr><td>家电</td><td>156</td><td>37</td><td class="growth-positive">+322%</td><td>40,473</td></tr>
-      <tr><td>设备</td><td>275</td><td>72</td><td class="growth-positive">+282%</td><td>84,657</td></tr>
-      <tr><td>肉类</td><td>87</td><td>28</td><td class="growth-positive">+211%</td><td>21,973</td></tr>
-      <tr><td>快递</td><td>695</td><td>278</td><td class="growth-positive">+150%</td><td>414,763</td></tr>
-    </tbody>
-  </table>
-  <p>新货主大量涌入食品/配件/家电赛道，<strong>网络效应正在形成</strong>。</p>
-</div>
-
-<div class="card">
-  <h2>六、增长机会总结</h2>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;">
-    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <span class="badge badge-p0">P0</span> <strong>立即投入</strong>
-      </div>
-      <p style="font-size:13px;"><strong>食品</strong>: 17万单,+2,345%,货主+357%<br>→ 建食品运力</p>
-      <p style="font-size:13px;margin-top:8px;"><strong>配件/设备</strong>: 各8.8万单,+943%<br>→ 深耕B2B</p>
-      <p style="font-size:13px;margin-top:8px;"><strong>快递</strong>: 41.5万单,+481%<br>→ 保网络密度</p>
+    <!-- 添加区域 -->
+    <div class="add-section">
+        <div class="add-row">
+            <input type="text" id="dishName" placeholder="菜名，如 红烧肉" />
+            <select id="dishCategory">
+                <option value="荤">🥩 荤菜</option>
+                <option value="素">🥬 素菜</option>
+                <option value="汤">🍲 汤类</option>
+                <option value="主食">🍚 主食</option>
+                <option value="其他">🧂 其他</option>
+            </select>
+            <button class="btn btn-primary" id="addBtn">➕ 添加</button>
+        </div>
+        <div class="action-bar">
+            <div class="filter-bar">
+                <label for="filterSelect">🔍 分类筛选</label>
+                <select id="filterSelect">
+                    <option value="全部">全部</option>
+                    <option value="荤">荤菜</option>
+                    <option value="素">素菜</option>
+                    <option value="汤">汤类</option>
+                    <option value="主食">主食</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <button class="btn btn-outline" id="clearFilterBtn">✖ 清除筛选</button>
+        </div>
     </div>
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <span class="badge badge-p1">P1</span> <strong>中期布局</strong>
-      </div>
-      <p style="font-size:13px;"><strong>光伏玻璃</strong>: 23,676单,+1,855% 新能源</p>
-      <p style="font-size:13px;margin-top:8px;"><strong>翻斗车/挖机</strong>: 均价1-1.7万/单</p>
-      <p style="font-size:13px;margin-top:8px;"><strong>电芯/电池</strong>: +5,411%</p>
-      <p style="font-size:13px;margin-top:8px;"><strong>棉纱</strong>: 均价16,583,+708%</p>
+
+    <!-- 菜谱列表 -->
+    <div class="recipe-list" id="recipeListContainer">
+        <div class="list-header">
+            <span>📖 我的菜谱</span>
+            <span id="filterHint">全部</span>
+        </div>
+        <div id="recipeList">
+            <!-- 动态渲染 -->
+            <div class="empty-state">
+                <span>🍽️</span>
+                还没有菜谱，快添加一道拿手菜吧！
+            </div>
+        </div>
     </div>
-    <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:16px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <span class="badge badge-p2">P2</span> <strong>防御关注</strong>
-      </div>
-      <p style="font-size:13px;"><span class="growth-negative">瓷砖 -19%</span> 排查</p>
-      <p style="font-size:13px;margin-top:8px;"><span class="growth-negative">京东快递 -43%</span> 排查</p>
-      <p style="font-size:13px;margin-top:8px;"><span class="growth-negative">硅 -73%、主焦煤 -59%</span> 维护</p>
+
+    <!-- 随机推荐 + 统计 -->
+    <div class="random-section">
+        <div class="random-pick">
+            <span style="font-weight:450; color:#4d453c;">🎲 随机推荐</span>
+            <span class="random-result placeholder" id="randomResult">点一下试试</span>
+            <button class="btn btn-success" id="randomBtn">✨ 摇一摇</button>
+        </div>
+        <span class="stats" id="statsDisplay">📊 0 道</span>
     </div>
-  </div>
 </div>
-
-<div style="text-align:center;color:var(--muted);font-size:12px;padding:24px;">
-  报告生成：2026-06-29 · 数据源：华为云 DWS (dws-ods) · dwd.dwd_transport_detail_info
-</div>
-
-</div>
-
 <script>
-new Chart(document.getElementById('chartGrowthMatrix'), {
-  type: 'bar',
-  data: {
-    labels: ['快递','百货','煤','食品','饮料','配件','设备','零食','光伏玻璃','纸箱','家电','啤酒','汽车配件','钢材','砂石'],
-    datasets: [{ label: '2025运单量', data: [414763,390339,288793,172806,133487,88113,84657,30550,23676,23403,40473,61447,59867,22257,9615], backgroundColor: '#1a56db', borderRadius: 4 }]
-  },
-  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => v >= 10000 ? (v/10000).toFixed(0)+'万' : v } } } }
-});
-new Chart(document.getElementById('chartHighGrowth'), {
-  type: 'bar',
-  data: {
-    labels: ['翻斗车','电芯','铝棒','铜板','餐饮食材','光伏玻璃','棉布','食品'],
-    datasets: [{ label: '2025运单量', data: [1256,8376,7312,5893,6428,23676,985,172806], backgroundColor: '#f59e0b', borderRadius: 4 }]
-  },
-  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { afterLabel: ctx => { const g = [31300,5411,34719,73563,5852,1855,98400,2345][ctx.dataIndex]; return '同比增长: +'+g.toLocaleString()+'%'; } } } }, scales: { x: { ticks: { callback: v => v >= 10000 ? (v/10000).toFixed(0)+'万' : v } } } }
-});
+    (function() {
+        // ---------- 数据层 ----------
+        let recipes = [];
+        let currentFilter = '全部';
+
+        // DOM 引用
+        const dishNameInput = document.getElementById('dishName');
+        const dishCategorySelect = document.getElementById('dishCategory');
+        const addBtn = document.getElementById('addBtn');
+        const filterSelect = document.getElementById('filterSelect');
+        const clearFilterBtn = document.getElementById('clearFilterBtn');
+        const recipeListEl = document.getElementById('recipeList');
+        const filterHint = document.getElementById('filterHint');
+        const randomResult = document.getElementById('randomResult');
+        const randomBtn = document.getElementById('randomBtn');
+        const countDisplay = document.getElementById('countDisplay');
+        const statsDisplay = document.getElementById('statsDisplay');
+
+        // ---------- 存储 ----------
+        function loadFromStorage() {
+            const stored = localStorage.getItem('recipeBook');
+            if (stored) {
+                try {
+                    recipes = JSON.parse(stored);
+                    // 保证每个菜都有 category (旧数据兼容)
+                    recipes = recipes.filter(r => r && typeof r.name === 'string')
+                        .map(r => ({
+                            name: r.name.trim(),
+                            category: r.category || '其他'
+                        }));
+                } catch (e) {
+                    recipes = [];
+                }
+            } else {
+                // 初始化示例数据（更丰富一些）
+                recipes = [
+                    { name: '红烧肉', category: '荤' },
+                    { name: '番茄炒蛋', category: '素' },
+                    { name: '紫菜蛋花汤', category: '汤' },
+                    { name: '蛋炒饭', category: '主食' },
+                    { name: '凉拌黄瓜', category: '素' },
+                ];
+            }
+            // 去重（保留第一个）
+            const seen = new Set();
+            recipes = recipes.filter(r => {
+                const key = r.name + '|' + r.category;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+            saveToStorage();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('recipeBook', JSON.stringify(recipes));
+            updateUI();
+        }
+
+        // ---------- 渲染 ----------
+        function getFilteredList() {
+            if (currentFilter === '全部') return recipes.slice();
+            return recipes.filter(r => r.category === currentFilter);
+        }
+
+        function render() {
+            const filtered = getFilteredList();
+            const total = recipes.length;
+            const filteredCount = filtered.length;
+
+            // 更新计数
+            countDisplay.textContent = total + '道';
+            statsDisplay.textContent = `📊 ${filteredCount} / ${total} 道`;
+            filterHint.textContent = currentFilter === '全部' ? '全部' : currentFilter;
+
+            if (filtered.length === 0) {
+                let msg = '还没有菜谱，快添加一道拿手菜吧！';
+                if (total > 0 && currentFilter !== '全部') {
+                    msg = `😅 没有“${currentFilter}”类菜品，试试其他分类吧`;
+                }
+                recipeListEl.innerHTML = `<div class="empty-state"><span>🍽️</span>${msg}</div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach((item, index) => {
+                // 为了删除，使用原始索引(但要小心过滤后索引和原始不一致, 存name+category作为唯一key)
+                const categoryClass = item.category || '其他';
+                html += `
+                    <div class="recipe-item" data-name="${escapeHtml(item.name)}" data-category="${escapeHtml(item.category)}">
+                        <div class="recipe-info">
+                            <span class="recipe-name">${escapeHtml(item.name)}</span>
+                            <span class="recipe-tag ${categoryClass}">${escapeHtml(item.category)}</span>
+                        </div>
+                        <button class="recipe-delete" data-name="${escapeHtml(item.name)}" data-category="${escapeHtml(item.category)}" title="删除">✕</button>
+                    </div>
+                `;
+            });
+            recipeListEl.innerHTML = html;
+
+            // 绑定删除事件 (委托)
+            recipeListEl.querySelectorAll('.recipe-delete').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const name = this.getAttribute('data-name');
+                    const category = this.getAttribute('data-category');
+                    deleteRecipe(name, category);
+                });
+            });
+        }
+
+        // 简单的转义
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // ---------- 操作 ----------
+        function addRecipe() {
+            let name = dishNameInput.value.trim();
+            const category = dishCategorySelect.value;
+            if (!name) {
+                alert('请输入菜名 🥺');
+                return;
+            }
+            // 重名+同分类检查
+            const exists = recipes.some(r => r.name === name && r.category === category);
+            if (exists) {
+                alert(`“${name}” 已在 ${category} 分类中，不必重复添加`);
+                return;
+            }
+            recipes.push({ name, category });
+            saveToStorage();
+            dishNameInput.value = '';
+            dishNameInput.focus();
+            // 重置随机结果占位
+            randomResult.textContent = '✨ 已更新';
+            randomResult.className = 'random-result';
+            setTimeout(() => {
+                if (recipes.length > 0) {
+                    randomResult.textContent = '点一下试试';
+                    randomResult.className = 'random-result placeholder';
+                }
+            }, 1200);
+        }
+
+        function deleteRecipe(name, category) {
+            if (!confirm(`确定要删除 “${name}” 吗？`)) return;
+            const newRecipes = recipes.filter(r => !(r.name === name && r.category === category));
+            if (newRecipes.length === recipes.length) return;
+            recipes = newRecipes;
+            saveToStorage();
+            // 如果当前筛选下没有数据, 自动切回全部
+            const filtered = getFilteredList();
+            if (filtered.length === 0 && currentFilter !== '全部') {
+                currentFilter = '全部';
+                filterSelect.value = '全部';
+            }
+            updateUI();
+        }
+
+        function randomPick() {
+            const filtered = getFilteredList();
+            if (filtered.length === 0) {
+                if (recipes.length === 0) {
+                    randomResult.textContent = '🥲 还没菜呢';
+                } else {
+                    randomResult.textContent = `😅 没有“${currentFilter}”类`;
+                }
+                randomResult.className = 'random-result placeholder';
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * filtered.length);
+            const picked = filtered[randomIndex];
+            randomResult.textContent = `🍳 ${picked.name} (${picked.category})`;
+            randomResult.className = 'random-result';
+        }
+
+        function setFilter(category) {
+            currentFilter = category;
+            filterSelect.value = category;
+            render();
+            // 随机结果提示重置（但保留文字）
+            if (recipes.length > 0) {
+                const filtered = getFilteredList();
+                if (filtered.length === 0) {
+                    randomResult.textContent = `🔍 无“${category}”`;
+                    randomResult.className = 'random-result placeholder';
+                } else {
+                    randomResult.textContent = '🎯 筛选已切换';
+                    randomResult.className = 'random-result placeholder';
+                    setTimeout(() => {
+                        if (getFilteredList().length > 0) {
+                            randomResult.textContent = '点一下试试';
+                            randomResult.className = 'random-result placeholder';
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
+        function updateUI() {
+            render();
+            // 如果当前筛选为空且不是全部，自动重置
+            const filtered = getFilteredList();
+            if (filtered.length === 0 && currentFilter !== '全部' && recipes.length > 0) {
+                // 但不要自动切换，用户可以手动清除
+            }
+            if (recipes.length === 0) {
+                randomResult.textContent = '🍽️ 添加第一道菜';
+                randomResult.className = 'random-result placeholder';
+            } else {
+                // 但如果是筛选状态无结果，已经在setFilter处理
+                if (getFilteredList().length === 0 && currentFilter !== '全部') {
+                    // 保留提示
+                } else if (randomResult.textContent.includes('无') || randomResult.textContent.includes('还没') || randomResult.textContent === '点一下试试' || randomResult.textContent === '✨ 已更新' || randomResult.textContent === '🎯 筛选已切换') {
+                    // 保持
+                } else {
+                    // 保留上次随机结果
+                }
+            }
+        }
+
+        // ---------- 重置筛选 ----------
+        function clearFilter() {
+            if (currentFilter === '全部') {
+                // 如果已经是全部，但可能随机提示被占，重置随机提示
+                if (recipes.length > 0) {
+                    randomResult.textContent = '点一下试试';
+                    randomResult.className = 'random-result placeholder';
+                }
+                return;
+            }
+            setFilter('全部');
+            // 重置随机提示
+            if (recipes.length > 0) {
+                randomResult.textContent = '点一下试试';
+                randomResult.className = 'random-result placeholder';
+            }
+        }
+
+        // ---------- 初始化事件 ----------
+        function init() {
+            loadFromStorage();
+
+            addBtn.addEventListener('click', addRecipe);
+            dishNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addRecipe();
+            });
+
+            filterSelect.addEventListener('change', function() {
+                setFilter(this.value);
+            });
+
+            clearFilterBtn.addEventListener('click', clearFilter);
+
+            randomBtn.addEventListener('click', randomPick);
+
+            // 点击随机结果也可以触发随机（小彩蛋）
+            randomResult.addEventListener('click', function() {
+                if (recipes.length > 0) randomPick();
+            });
+
+            // 额外：点击列表空白区域清除焦点
+            document.addEventListener('click', function(e) {
+                // 无特殊
+            });
+
+            updateUI();
+        }
+
+        // 启动
+        init();
+    })();
 </script>
 </body>
 </html>
