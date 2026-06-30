@@ -1,706 +1,542 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍳 私房菜谱记录器</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
-        body {
-            background: linear-gradient(145deg, #f8f4ec 0%, #f0ebe1 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-        }
-        .app-container {
-            max-width: 760px;
-            width: 100%;
-            background: rgba(255, 250, 240, 0.75);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border-radius: 48px;
-            padding: 28px 24px 32px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255, 245, 230, 0.5);
-            transition: 0.2s;
-        }
-        h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #3e3a32;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0 0 6px 0;
-            letter-spacing: -0.5px;
-        }
-        h1 small {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: #8a7f72;
-            margin-left: auto;
-            background: #e8e0d5;
-            padding: 4px 14px;
-            border-radius: 40px;
-            letter-spacing: 0;
-        }
-        .subhead {
-            color: #6f6658;
-            margin-bottom: 24px;
-            font-size: 0.95rem;
-            border-left: 4px solid #d8cdbc;
-            padding-left: 14px;
-            background: rgba(220, 210, 195, 0.2);
-            border-radius: 0 12px 12px 0;
-        }
-        .add-section {
-            background: #fcf9f4;
-            border-radius: 32px;
-            padding: 20px 20px 22px;
-            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.02);
-            margin-bottom: 28px;
-            border: 1px solid #ede7dd;
-        }
-        .add-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 10px;
-            align-items: center;
-        }
-        .add-row input, .add-row select {
-            flex: 1 1 130px;
-            padding: 12px 16px;
-            border: 1px solid #d9d0c2;
-            border-radius: 60px;
-            background: white;
-            font-size: 0.95rem;
-            outline: none;
-            transition: 0.15s;
-            color: #2f2b26;
-        }
-        .add-row input:focus, .add-row select:focus {
-            border-color: #b8a48c;
-            box-shadow: 0 0 0 3px rgba(184, 164, 140, 0.2);
-        }
-        .add-row input::placeholder {
-            color: #b3a89a;
-            font-weight: 300;
-        }
-        .star-selector {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: white;
-            padding: 4px 16px 4px 12px;
-            border-radius: 60px;
-            border: 1px solid #d9d0c2;
-            flex: 0 1 auto;
-        }
-        .star-selector label {
-            font-size: 0.85rem;
-            color: #6f6658;
-            margin-right: 4px;
-        }
-        .star-selector .stars-display {
-            font-size: 1.3rem;
-            letter-spacing: 2px;
-            color: #f5b342;
-            cursor: pointer;
-            user-select: none;
-            min-width: 100px;
-            text-align: center;
-        }
-        .star-selector input[type="range"] {
-            width: 80px;
-            accent-color: #f5b342;
-            background: transparent;
-            border: none;
-            padding: 0;
-            margin: 0;
-        }
-        .star-selector input[type="range"]:focus {
-            box-shadow: none;
-        }
-        .btn {
-            background: #e8e0d5;
-            border: none;
-            padding: 12px 22px;
-            border-radius: 60px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            color: #3e3a32;
-            cursor: pointer;
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            border: 1px solid transparent;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            flex: 0 1 auto;
-        }
-        .btn-primary {
-            background: #3e3a32;
-            color: #fcf9f4;
-            border-color: #3e3a32;
-            flex: 1 0 auto;
-        }
-        .btn-primary:hover {
-            background: #2f2b26;
-            transform: scale(0.97);
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #ccc3b5;
-        }
-        .btn-outline:hover {
-            background: #ede7dd;
-        }
-        .btn-danger {
-            background: #e8d7d2;
-            color: #7f4e45;
-            border-color: #dccac4;
-        }
-        .btn-danger:hover {
-            background: #dfc7c0;
-        }
-        .btn-success {
-            background: #c7d5c0;
-            color: #2f4d3a;
-            border-color: #b3c7ab;
-        }
-        .btn-success:hover {
-            background: #b8cbb0;
-        }
-        .action-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 12px;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            background: #f6f1ea;
-            padding: 8px 12px 8px 18px;
-            border-radius: 60px;
-        }
-        .filter-bar label {
-            font-size: 0.9rem;
-            color: #5f5547;
-            font-weight: 450;
-        }
-        .filter-bar select {
-            background: white;
-            border: 1px solid #d5cbbc;
-            border-radius: 40px;
-            padding: 6px 16px 6px 14px;
-            font-size: 0.9rem;
-            outline: none;
-            color: #2f2b26;
-        }
-        .recipe-list {
-            margin: 20px 0 18px;
-            background: rgba(255, 250, 240, 0.5);
-            border-radius: 28px;
-            padding: 6px 6px 6px 6px;
-            min-height: 160px;
-        }
-        .list-header {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 14px 4px 18px;
-            font-size: 0.85rem;
-            color: #887e70;
-            letter-spacing: 0.3px;
-            border-bottom: 1px dashed #e0d7cb;
-            margin-bottom: 6px;
-        }
-        .list-header span:last-child {
-            opacity: 0.7;
-        }
-        .recipe-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px 10px 18px;
-            margin: 4px 0;
-            background: rgba(255, 252, 248, 0.7);
-            border-radius: 60px;
-            transition: 0.1s;
-            border: 1px solid transparent;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .recipe-item:hover {
-            background: #fcf9f4;
-            border-color: #e3d9cd;
-        }
-        .recipe-info {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 6px 16px;
-            flex: 1;
-        }
-        .recipe-name {
-            font-weight: 500;
-            font-size: 1.05rem;
-            color: #2f2b26;
-        }
-        .recipe-tag {
-            background: #e8e0d5;
-            padding: 2px 14px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            color: #4d453c;
-            letter-spacing: 0.3px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-        .recipe-tag.荤 { background: #f0d5c4; color: #6d3f2e; }
-        .recipe-tag.素 { background: #d4e0c8; color: #2f543a; }
-        .recipe-tag.汤 { background: #c8dce6; color: #1f4b5e; }
-        .recipe-tag.主食 { background: #ede0b0; color: #6b5a1f; }
-        .recipe-tag.其他 { background: #e3d9d9; color: #4f4545; }
-        .recipe-stars {
-            color: #f5b342;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            white-space: nowrap;
-            min-width: 70px;
-        }
-        .recipe-stars .empty-star {
-            color: #ddd6cc;
-        }
-        .recipe-delete {
-            background: transparent;
-            border: none;
-            color: #b6a89b;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 40px;
-            transition: 0.1s;
-            line-height: 1;
-        }
-        .recipe-delete:hover {
-            background: #f0e3dc;
-            color: #8f6a5c;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 42px 16px 38px;
-            color: #aa9f90;
-            font-size: 0.98rem;
-        }
-        .empty-state span {
-            font-size: 2.8rem;
-            display: block;
-            margin-bottom: 10px;
-        }
-        .random-section {
-            background: #f6f1ea;
-            border-radius: 60px;
-            padding: 8px 8px 8px 24px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 6px;
-            border: 1px solid #e7dfd4;
-        }
-        .random-pick {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .random-result {
-            font-weight: 500;
-            color: #2f2b26;
-            background: white;
-            padding: 6px 20px;
-            border-radius: 60px;
-            font-size: 1rem;
-            min-width: 120px;
-            box-shadow: inset 0 0 0 1px #e0d7cb;
-        }
-        .random-result.placeholder {
-            color: #b9aea0;
-            font-weight: 400;
-        }
-        .stats {
-            font-size: 0.8rem;
-            color: #7f7567;
-            background: #e8e0d5;
-            padding: 4px 14px;
-            border-radius: 40px;
-        }
-        @media (max-width: 550px) {
-            .app-container { padding: 20px 16px; }
-            .add-row input, .add-row select { flex: 1 1 100%; }
-            .btn-primary { flex: 1 1 100%; }
-            .filter-bar { width: 100%; justify-content: center; }
-            .random-section { flex-direction: column; align-items: stretch; gap: 12px; padding: 18px 16px; }
-            .random-pick { justify-content: center; }
-            .star-selector { flex: 1 1 100%; justify-content: center; }
-            .star-selector input[type="range"] { width: 60px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🍳 私房菜谱记录器</title>
+<style>
+  * { box-sizing: border-box; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; }
+  body {
+    background: linear-gradient(145deg, #f8f4ec 0%, #f0ebe1 100%);
+    min-height: 100vh; padding: 20px; display: flex; justify-content: center;
+  }
+  .app-container {
+    max-width: 760px; width: 100%;
+    background: rgba(255,250,240,0.75);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    border-radius: 48px; padding: 28px 24px 32px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,245,230,0.5);
+  }
+  h1 {
+    font-size: 2rem; font-weight: 600; color: #3e3a32;
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 0 6px 0; letter-spacing: -0.5px; flex-wrap: wrap;
+  }
+  h1 small {
+    font-size: 0.9rem; font-weight: 400; color: #8a7f72;
+    margin-left: auto;
+    background: #e8e0d5; padding: 4px 14px; border-radius: 40px; letter-spacing: 0;
+  }
+  .subhead {
+    color: #6f6658; margin-bottom: 24px; font-size: 0.95rem;
+    border-left: 4px solid #d8cdbc; padding-left: 14px;
+    background: rgba(220,210,195,0.2); border-radius: 0 12px 12px 0;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  .sync-status {
+    font-size: 12px; color: #8a7f72;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .sync-status .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .sync-status .dot.green { background: #4caf50; }
+  .sync-status .dot.gray { background: #bbb; }
+  .sync-status .dot.yellow { background: #ff9800; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .add-section {
+    background: #fcf9f4; border-radius: 32px; padding: 20px 20px 22px;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.02);
+    margin-bottom: 20px; border: 1px solid #ede7dd;
+  }
+  .add-row {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  }
+  .add-row input, .add-row select, .add-row textarea {
+    flex: 1 1 120px; padding: 10px 14px;
+    border: 1px solid #d9d0c2; border-radius: 60px;
+    background: white; font-size: 0.9rem; outline: none; transition: 0.15s; color: #2f2b26;
+  }
+  .add-row textarea { flex-basis: 100%; border-radius: 16px; min-height: 60px; resize: vertical; }
+  .add-row input:focus, .add-row select:focus, .add-row textarea:focus {
+    border-color: #b8a48c; box-shadow: 0 0 0 3px rgba(184,164,140,0.2);
+  }
+  .add-row input::placeholder, .add-row textarea::placeholder { color: #b3a89a; font-weight: 300; }
+  .star-selector {
+    display: flex; align-items: center; gap: 6px;
+    background: white; padding: 4px 16px 4px 12px;
+    border-radius: 60px; border: 1px solid #d9d0c2; flex: 0 1 auto;
+  }
+  .star-selector label { font-size: 0.85rem; color: #6f6658; margin-right: 2px; }
+  .star-selector .stars-display {
+    font-size: 1.3rem; letter-spacing: 2px; color: #f5b342;
+    cursor: pointer; user-select: none; min-width: 90px; text-align: center;
+  }
+  .star-selector input[type="range"] { width: 80px; accent-color: #f5b342; background: transparent; border: none; padding: 0; margin: 0; }
+  .btn {
+    background: #e8e0d5; border: none; padding: 10px 20px;
+    border-radius: 60px; font-weight: 500; font-size: 0.9rem; color: #3e3a32;
+    cursor: pointer; transition: 0.15s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+  .btn-primary { background: #3e3a32; color: #fcf9f4; border-color: #3e3a32; }
+  .btn-primary:hover { background: #2f2b26; transform: scale(0.97); }
+  .btn-sm { padding: 6px 14px; font-size: 0.85rem; }
+  .btn-danger { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+  .btn-danger:hover { background: #c0392b; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .toolbar input, .toolbar select {
+    padding: 8px 14px; border: 1px solid #d9d0c2; border-radius: 60px;
+    background: white; font-size: 0.85rem; color: #2f2b26;
+    flex: 1; min-width: 80px; outline: none;
+  }
+  .toolbar input:focus, .toolbar select:focus { border-color: #b8a48c; box-shadow: 0 0 0 3px rgba(184,164,140,0.2); }
+  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; font-size: 0.85rem; color: #6f6658; }
+
+  .recipe-list { display: flex; flex-direction: column; gap: 10px; }
+  .recipe-card {
+    background: #fcf9f4; border-radius: 24px; padding: 16px 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #ede7dd;
+    transition: 0.15s;
+  }
+  .recipe-card:hover { border-color: #d8cdbc; }
+  .recipe-card .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .recipe-card .recipe-name { font-size: 1.1rem; font-weight: 600; color: #3e3a32; }
+  .recipe-card .recipe-meta { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 6px; font-size: 0.8rem; color: #8a7f72; }
+  .recipe-card .recipe-notes { font-size: 0.85rem; color: #5a5248; line-height: 1.5; margin: 6px 0 0; white-space: pre-wrap; }
+  .recipe-card .card-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
+  .recipe-card .card-actions .btn { font-size: 0.8rem; padding: 4px 12px; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; background: #ede7dd; color: #5a5248; }
+  .stars { color: #f5b342; font-size: 1rem; letter-spacing: 1px; }
+
+  .empty-state { text-align: center; padding: 50px 20px; color: #8a7f72; }
+  .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.95rem; }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.3); backdrop-filter: blur(3px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fcf9f4; border-radius: 32px; padding: 28px 24px;
+    max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid #ede7dd;
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h2 { font-size: 1.4rem; color: #3e3a32; margin-bottom: 20px; }
+  .modal .field { margin-bottom: 14px; }
+  .modal label { display: block; font-size: 0.85rem; font-weight: 500; color: #5a5248; margin-bottom: 4px; }
+  .modal input, .modal select, .modal textarea { width: 100%; padding: 10px 14px; border: 1px solid #d9d0c2; border-radius: 16px; font-size: 0.95rem; font-family: inherit; background: white; }
+  .modal input:focus, .modal select:focus, .modal textarea:focus { outline: none; border-color: #b8a48c; box-shadow: 0 0 0 3px rgba(184,164,140,0.2); }
+  .modal textarea { resize: vertical; min-height: 80px; }
+  .modal .btn-group { display: flex; gap: 10px; margin-top: 18px; }
+  .modal .btn-group .btn { flex: 1; justify-content: center; }
+
+  @media (max-width: 500px) {
+    body { padding: 12px; }
+    .app-container { border-radius: 28px; padding: 18px 14px 24px; }
+    h1 { font-size: 1.6rem; }
+    .add-section { padding: 14px; }
+    .add-row input, .add-row select { flex-basis: 100%; }
+    .star-selector { flex: 1 1 auto; }
+  }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: #3e3a32; color: #fcf9f4; padding: 10px 24px;
+    border-radius: 60px; font-size: 0.9rem; z-index: 200;
+    opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  .config-hint {
+    display: none;
+    background: #fff3cd; border: 1px solid #ffc107; border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 16px; font-size: 0.85rem; color: #664d03;
+  }
+  .config-hint strong { display: block; margin-bottom: 4px; }
+</style>
 </head>
 <body>
-<div class="app-container" id="app">
-    <h1>
-        🥘 菜谱记录器
-        <small id="countDisplay">0道</small>
-    </h1>
-    <div class="subhead">📋 记录你拿手的 · 随机翻牌解决“今天吃什么”</div>
 
-    <!-- 添加区域 -->
-    <div class="add-section">
-        <div class="add-row">
-            <input type="text" id="dishName" placeholder="菜名，如 红烧肉" />
-            <select id="dishCategory">
-                <option value="荤">🥩 荤菜</option>
-                <option value="素">🥬 素菜</option>
-                <option value="汤">🍲 汤类</option>
-                <option value="主食">🍚 主食</option>
-                <option value="其他">🧂 其他</option>
-            </select>
-            <div class="star-selector">
-                <label>⭐</label>
-                <span class="stars-display" id="starDisplay">★★★</span>
-                <input type="range" id="starSlider" min="0.5" max="5" step="0.5" value="3" />
-            </div>
-            <button class="btn btn-primary" id="addBtn">➕ 添加</button>
-        </div>
-        <div class="action-bar">
-            <div class="filter-bar">
-                <label for="filterSelect">🔍 分类筛选</label>
-                <select id="filterSelect">
-                    <option value="全部">全部</option>
-                    <option value="荤">荤菜</option>
-                    <option value="素">素菜</option>
-                    <option value="汤">汤类</option>
-                    <option value="主食">主食</option>
-                    <option value="其他">其他</option>
-                </select>
-            </div>
-            <button class="btn btn-outline" id="clearFilterBtn">✖ 清除筛选</button>
-        </div>
-    </div>
+<div class="app-container">
+  <h1>🍳 私房菜谱 <small id="dishCount">0 道</small></h1>
 
-    <!-- 菜谱列表 -->
-    <div class="recipe-list" id="recipeListContainer">
-        <div class="list-header">
-            <span>📖 我的菜谱</span>
-            <span id="filterHint">全部</span>
-        </div>
-        <div id="recipeList">
-            <div class="empty-state">
-                <span>🍽️</span>
-                还没有菜谱，快添加一道拿手菜吧！
-            </div>
-        </div>
-    </div>
+  <div class="subhead">
+    <span>记录你的拿手好菜，想不起来做什么就点一下 ✨</span>
+    <span class="sync-status" id="syncStatus">
+      <span class="dot" id="syncDot"></span>
+      <span id="syncText">同步中...</span>
+    </span>
+  </div>
 
-    <!-- 随机推荐 + 统计 -->
-    <div class="random-section">
-        <div class="random-pick">
-            <span style="font-weight:450; color:#4d453c;">🎲 随机推荐</span>
-            <span class="random-result placeholder" id="randomResult">点一下试试</span>
-            <button class="btn btn-success" id="randomBtn">✨ 摇一摇</button>
-        </div>
-        <span class="stats" id="statsDisplay">📊 0 道</span>
+  <div class="config-hint" id="configHint">
+    <strong>🔧 配置提示</strong>
+    如需使用云数据库，请先在 <code>index.html</code> 中替换 <code>CLOUD_ENV_ID</code> 为你的腾讯云环境 ID。
+  </div>
+
+  <div class="add-section">
+    <div class="add-row">
+      <input type="text" id="dishNameInput" placeholder="菜名（必填）" maxlength="50">
+      <select id="categorySelect">
+        <option value="早餐">早餐</option>
+        <option value="午餐" selected>午餐</option>
+        <option value="晚餐">晚餐</option>
+        <option value="点心">点心</option>
+        <option value="饮品">饮品</option>
+      </select>
+      <div class="star-selector">
+        <label>⭐</label>
+        <span class="stars-display" id="starPreview">★★★☆☆</span>
+        <input type="range" id="starSlider" min="1" max="5" value="3" step="1">
+      </div>
+      <textarea id="notesInput" placeholder="备注（做法／食材／心得...）" rows="1"></textarea>
+      <input type="date" id="dateInput">
+      <button class="btn btn-primary" id="addBtn">＋ 添加</button>
     </div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="searchInput" placeholder="🔍 搜索菜品...">
+    <select id="filterSelect">
+      <option value="全部">全部</option>
+      <option value="早餐">早餐</option>
+      <option value="午餐">午餐</option>
+      <option value="晚餐">晚餐</option>
+      <option value="点心">点心</option>
+      <option value="饮品">饮品</option>
+    </select>
+    <select id="sortSelect">
+      <option value="newest">最新</option>
+      <option value="oldest">最早</option>
+      <option value="rating">评分⬇</option>
+      <option value="name">菜名</option>
+    </select>
+    <button class="btn btn-sm" id="randomBtn">🎲 随机选</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="recipe-list" id="recipeList"></div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <h2 id="modalTitle">编辑菜品</h2>
+      <form id="editForm">
+        <div class="field">
+          <label>菜名 *</label>
+          <input type="text" id="editName" required maxlength="50">
+        </div>
+        <div class="field">
+          <label>类型</label>
+          <select id="editCategory">
+            <option value="早餐">早餐</option>
+            <option value="午餐">午餐</option>
+            <option value="晚餐">晚餐</option>
+            <option value="点心">点心</option>
+            <option value="饮品">饮品</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>评分</label>
+          <select id="editRating">
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3" selected>⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+          </select>
+        </div>
+        <div class="field"><label>日期</label><input type="date" id="editDate"></div>
+        <div class="field"><label>备注</label><textarea id="editNotes" rows="3"></textarea></div>
+        <input type="hidden" id="editId">
+        <div class="btn-group">
+          <button type="button" class="btn" onclick="closeEditModal()">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@cloudbase/js-sdk@1.14.0/dist/cloudbase.min.js"></script>
 <script>
-    (function() {
-        // ---------- 数据层 ----------
-        let recipes = [];
-        let currentFilter = '全部';
+// ═══════════════════════════════════════════════════════════════
+// 配置 — 替换为你的腾讯云·云开发环境 ID
+// ═══════════════════════════════════════════════════════════════
+const CLOUD_ENV_ID = 'ilya-d7gcuc0w2c32f528f'
 
-        // DOM 引用
-        const dishNameInput = document.getElementById('dishName');
-        const dishCategorySelect = document.getElementById('dishCategory');
-        const starSlider = document.getElementById('starSlider');
-        const starDisplay = document.getElementById('starDisplay');
-        const addBtn = document.getElementById('addBtn');
-        const filterSelect = document.getElementById('filterSelect');
-        const clearFilterBtn = document.getElementById('clearFilterBtn');
-        const recipeListEl = document.getElementById('recipeList');
-        const filterHint = document.getElementById('filterHint');
-        const randomResult = document.getElementById('randomResult');
-        const randomBtn = document.getElementById('randomBtn');
-        const countDisplay = document.getElementById('countDisplay');
-        const statsDisplay = document.getElementById('statsDisplay');
+// ═══════════════════════════════════════════════════════════════
+// 初始化 CloudBase
+// ═══════════════════════════════════════════════════════════════
+let cloudApp = null
+let isCloudReady = false
 
-        // ---------- 星星辅助 ----------
-        function renderStarsHtml(rating) {
-            const full = Math.floor(rating);
-            const half = rating % 1 >= 0.5 ? 1 : 0;
-            const empty = 5 - full - half;
-            return '★'.repeat(full) + (half ? '½' : '') + '<span class="empty-star">' + '★'.repeat(empty) + '</span>';
-        }
+async function initCloud() {
+  setSyncStatus('yellow', '连接中...')
+  try {
+    cloudApp = cloudbase.init({ env: CLOUD_ENV_ID })
+    await cloudApp.auth().signInAnonymously()
+    isCloudReady = true
+    setSyncStatus('green', '☁️ 已连接')
+    await loadFromCloud()
+  } catch (err) {
+    console.error('Cloud init error:', err)
+    setSyncStatus('gray', '离线模式')
+    loadFromLocal()
+  }
+}
 
-        function updateStarDisplay(val) {
-            const num = parseFloat(val);
-            const full = Math.floor(num);
-            const half = num % 1 >= 0.5 ? 1 : 0;
-            const empty = 5 - full - half;
-            let str = '★'.repeat(full) + (half ? '½' : '') + '<span style="color:#ddd6cc;">' + '★'.repeat(empty) + '</span>';
-            starDisplay.innerHTML = str;
-        }
+function setSyncStatus(color, text) {
+  document.getElementById('syncDot').className = 'dot ' + color
+  document.getElementById('syncText').textContent = text
+}
 
-        starSlider.addEventListener('input', function() {
-            updateStarDisplay(this.value);
-        });
-        // 初始化星星
-        updateStarDisplay(starSlider.value);
+// ═══════════════════════════════════════════════════════════════
+// 调用云函数
+// ═══════════════════════════════════════════════════════════════
+async function callFn(data) {
+  if (!isCloudReady) throw new Error('Cloud not ready')
+  const res = await cloudApp.callFunction({ name: 'recipe-api', data })
+  if (res && res.result) {
+    if (res.result.error) throw new Error(res.result.error)
+    return res.result
+  }
+  return res
+}
 
-        // ---------- 存储 ----------
-        function loadFromStorage() {
-            const stored = localStorage.getItem('recipeBook');
-            if (stored) {
-                try {
-                    recipes = JSON.parse(stored);
-                    recipes = recipes.filter(r => r && typeof r.name === 'string')
-                        .map(r => ({
-                            name: r.name.trim(),
-                            category: r.category || '其他',
-                            rating: typeof r.rating === 'number' ? r.rating : 3
-                        }));
-                } catch (e) {
-                    recipes = [];
-                }
-            } else {
-                recipes = [
-                    { name: '红烧肉', category: '荤', rating: 4.5 },
-                    { name: '番茄炒蛋', category: '素', rating: 4 },
-                    { name: '紫菜蛋花汤', category: '汤', rating: 3.5 },
-                    { name: '蛋炒饭', category: '主食', rating: 3 },
-                    { name: '凉拌黄瓜', category: '素', rating: 2.5 },
-                ];
-            }
-            const seen = new Set();
-            recipes = recipes.filter(r => {
-                const key = r.name + '|' + r.category;
-                if (seen.has(key)) return false;
-                seen.add(key);
-                return true;
-            });
-            saveToStorage();
-        }
+// ═══════════════════════════════════════════════════════════════
+// 数据层
+// ═══════════════════════════════════════════════════════════════
+let recipes = []
+const STORAGE_KEY = 'recipe_book_pg'
 
-        function saveToStorage() {
-            localStorage.setItem('recipeBook', JSON.stringify(recipes));
-            updateUI();
-        }
+function loadFromLocal() {
+  try { recipes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { recipes = [] }
+  updateUI()
+}
 
-        // ---------- 渲染 ----------
-        function getFilteredList() {
-            if (currentFilter === '全部') return recipes.slice();
-            return recipes.filter(r => r.category === currentFilter);
-        }
+function saveToLocal() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes)) } catch {}
+}
 
-        function render() {
-            const filtered = getFilteredList();
-            const total = recipes.length;
-            const filteredCount = filtered.length;
+async function loadFromCloud() {
+  try {
+    const result = await callFn({ action: 'list' })
+    if (result && result.data) {
+      recipes = result.data.map(r => ({
+        _id: r.id,
+        name: r.name,
+        category: r.category,
+        rating: r.rating,
+        notes: r.notes || '',
+        date: r.date || '',
+        createdAt: r.created_at
+      }))
+      saveToLocal()
+      updateUI()
+    } else {
+      loadFromLocal()
+    }
+  } catch (err) {
+    console.error('Cloud load error:', err)
+    loadFromLocal()
+  }
+}
 
-            countDisplay.textContent = total + '道';
-            statsDisplay.textContent = `📊 ${filteredCount} / ${total} 道`;
-            filterHint.textContent = currentFilter === '全部' ? '全部' : currentFilter;
+// ═══════════════════════════════════════════════════════════════
+// CRUD
+// ═══════════════════════════════════════════════════════════════
+async function addRecipe() {
+  const name = document.getElementById('dishNameInput').value.trim()
+  if (!name) { showToast('请输入菜名 🥺'); return }
+  if (recipes.some(r => r.name === name && r.category === document.getElementById('categorySelect').value)) {
+    showToast(`"${name}" 已存在`)
+    return
+  }
 
-            if (filtered.length === 0) {
-                let msg = '还没有菜谱，快添加一道拿手菜吧！';
-                if (total > 0 && currentFilter !== '全部') {
-                    msg = `😅 没有“${currentFilter}”类菜品，试试其他分类吧`;
-                }
-                recipeListEl.innerHTML = `<div class="empty-state"><span>🍽️</span>${msg}</div>`;
-                return;
-            }
+  const category = document.getElementById('categorySelect').value
+  const rating = parseInt(document.getElementById('starSlider').value)
+  const notes = document.getElementById('notesInput').value.trim()
+  const date = document.getElementById('dateInput').value
 
-            let html = '';
-            filtered.forEach((item) => {
-                const categoryClass = item.category || '其他';
-                const starsHtml = renderStarsHtml(item.rating || 3);
-                html += `
-                    <div class="recipe-item" data-name="${escapeHtml(item.name)}" data-category="${escapeHtml(item.category)}">
-                        <div class="recipe-info">
-                            <span class="recipe-name">${escapeHtml(item.name)}</span>
-                            <span class="recipe-tag ${categoryClass}">${escapeHtml(item.category)}</span>
-                            <span class="recipe-stars">${starsHtml}</span>
-                        </div>
-                        <button class="recipe-delete" data-name="${escapeHtml(item.name)}" data-category="${escapeHtml(item.category)}" title="删除">✕</button>
-                    </div>
-                `;
-            });
-            recipeListEl.innerHTML = html;
+  const recipe = { name, category, rating, notes, date, createdAt: Date.now() }
 
-            recipeListEl.querySelectorAll('.recipe-delete').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const name = this.getAttribute('data-name');
-                    const category = this.getAttribute('data-category');
-                    deleteRecipe(name, category);
-                });
-            });
-        }
+  // 云端写入
+  if (isCloudReady) {
+    try {
+      const result = await callFn({ action: 'add', name, category, rating, notes, date })
+      if (result && result.id) recipe._id = result.id
+    } catch (err) {
+      showToast('云端写入失败，已存到本地')
+    }
+  }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
+  recipes.push(recipe)
+  saveToLocal()
+  updateUI()
+  document.getElementById('dishNameInput').value = ''
+  document.getElementById('notesInput').value = ''
+  document.getElementById('dishNameInput').focus()
+  showToast('✅ 已添加！')
+}
 
-        // ---------- 操作 ----------
-        function addRecipe() {
-            let name = dishNameInput.value.trim();
-            const category = dishCategorySelect.value;
-            const rating = parseFloat(starSlider.value);
-            if (!name) {
-                alert('请输入菜名 🥺');
-                return;
-            }
-            const exists = recipes.some(r => r.name === name && r.category === category);
-            if (exists) {
-                alert(`“${name}” 已在 ${category} 分类中，不必重复添加`);
-                return;
-            }
-            recipes.push({ name, category, rating });
-            saveToStorage();
-            dishNameInput.value = '';
-            dishNameInput.focus();
-            randomResult.textContent = '✨ 已更新';
-            randomResult.className = 'random-result';
-            setTimeout(() => {
-                if (recipes.length > 0) {
-                    randomResult.textContent = '点一下试试';
-                    randomResult.className = 'random-result placeholder';
-                }
-            }, 1200);
-        }
+function editRecipe(id, name, category, rating, date, notes) {
+  document.getElementById('editId').value = id
+  document.getElementById('editName').value = name
+  document.getElementById('editCategory').value = category
+  document.getElementById('editRating').value = rating
+  document.getElementById('editDate').value = date
+  document.getElementById('editNotes').value = notes
+  document.getElementById('modalTitle').textContent = '✏️ 编辑 ' + name
+  document.getElementById('editModal').classList.add('show')
+}
 
-        function deleteRecipe(name, category) {
-            if (!confirm(`确定要删除 “${name}” 吗？`)) return;
-            const newRecipes = recipes.filter(r => !(r.name === name && r.category === category));
-            if (newRecipes.length === recipes.length) return;
-            recipes = newRecipes;
-            saveToStorage();
-            const filtered = getFilteredList();
-            if (filtered.length === 0 && currentFilter !== '全部') {
-                currentFilter = '全部';
-                filterSelect.value = '全部';
-            }
-            updateUI();
-        }
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('show')
+}
 
-        function randomPick() {
-            const filtered = getFilteredList();
-            if (filtered.length === 0) {
-                if (recipes.length === 0) {
-                    randomResult.textContent = '🥲 还没菜呢';
-                } else {
-                    randomResult.textContent = `😅 没有“${currentFilter}”类`;
-                }
-                randomResult.className = 'random-result placeholder';
-                return;
-            }
-            const randomIndex = Math.floor(Math.random() * filtered.length);
-            const picked = filtered[randomIndex];
-            const stars = renderStarsHtml(picked.rating || 3);
-            randomResult.innerHTML = `🍳 ${picked.name} (${picked.category}) ${stars}`;
-            randomResult.className = 'random-result';
-        }
+document.getElementById('editForm').addEventListener('submit', async function(e) {
+  e.preventDefault()
+  const id = document.getElementById('editId').value
+  const name = document.getElementById('editName').value.trim()
+  if (!name) { showToast('请输入菜名 🥺'); return }
 
-        function setFilter(category) {
-            currentFilter = category;
-            filterSelect.value = category;
-            render();
-            if (recipes.length > 0) {
-                const filtered = getFilteredList();
-                if (filtered.length === 0) {
-                    randomResult.textContent = `🔍 无“${category}”`;
-                    randomResult.className = 'random-result placeholder';
-                } else {
-                    randomResult.textContent = '🎯 筛选已切换';
-                    randomResult.className = 'random-result placeholder';
-                    setTimeout(() => {
-                        if (getFilteredList().length > 0) {
-                            randomResult.textContent = '点一下试试';
-                            randomResult.className = 'random-result placeholder';
-                        }
-                    }, 1000);
-                }
-            }
-        }
+  const category = document.getElementById('editCategory').value
+  const rating = parseInt(document.getElementById('editRating').value)
+  const date = document.getElementById('editDate').value
+  const notes = document.getElementById('editNotes').value.trim()
 
-        function updateUI() {
-            render();
-            if (recipes.length === 0) {
-                randomResult.textContent = '🍽️ 添加第一道菜';
-                randomResult.className = 'random-result placeholder';
-            }
-        }
+  if (isCloudReady && id) {
+    try {
+      await callFn({ action: 'update', id: parseInt(id), name, category, rating, notes, date })
+    } catch (err) { console.error('Update error:', err) }
+  }
 
-        function clearFilter() {
-            if (currentFilter === '全部') {
-                if (recipes.length > 0) {
-                    randomResult.textContent = '点一下试试';
-                    randomResult.className = 'random-result placeholder';
-                }
-                return;
-            }
-            setFilter('全部');
-            if (recipes.length > 0) {
-                randomResult.textContent = '点一下试试';
-                randomResult.className = 'random-result placeholder';
-            }
-        }
+  const idx = recipes.findIndex(r => r._id == id)
+  if (idx !== -1) { recipes[idx] = { ...recipes[idx], name, category, rating, notes, date } }
+  saveToLocal()
+  updateUI()
+  closeEditModal()
+  showToast('✅ 已更新')
+})
 
-        // ---------- 初始化 ----------
-        function init() {
-            loadFromStorage();
+async function deleteRecipe(id, name) {
+  if (!confirm(`确定要删除 "${name}" 吗？`)) return
+  if (isCloudReady && id) {
+    try { await callFn({ action: 'delete', id: parseInt(id) }) } catch {}
+  }
+  recipes = recipes.filter(r => r._id != id)
+  saveToLocal()
+  updateUI()
+  showToast('🗑️ 已删除')
+}
 
-            addBtn.addEventListener('click', addRecipe);
-            dishNameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addRecipe();
-            });
+// ═══════════════════════════════════════════════════════════════
+// UI 渲染
+// ═══════════════════════════════════════════════════════════════
+let currentFilter = '全部'
 
-            filterSelect.addEventListener('change', function() {
-                setFilter(this.value);
-            });
+function starStr(n) { return '★'.repeat(n) + '☆'.repeat(5 - n) }
 
-            clearFilterBtn.addEventListener('click', clearFilter);
-            randomBtn.addEventListener('click', randomPick);
-            randomResult.addEventListener('click', function() {
-                if (recipes.length > 0) randomPick();
-            });
+function esc(s) {
+  if (!s) return ''
+  const d = document.createElement('div'); d.textContent = s; return d.innerHTML
+}
 
-            updateUI();
-        }
+function getFilteredList() {
+  const search = document.getElementById('searchInput').value.trim().toLowerCase()
+  let list = [...recipes]
+  if (currentFilter !== '全部') list = list.filter(r => r.category === currentFilter)
+  if (search) list = list.filter(r => r.name.toLowerCase().includes(search))
+  const sort = document.getElementById('sortSelect').value
+  if (sort === 'newest') list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+  else if (sort === 'oldest') list.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+  else if (sort === 'rating') list.sort((a, b) => b.rating - a.rating)
+  else if (sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name))
+  return list
+}
 
-        init();
-    })();
+function render() {
+  const list = getFilteredList()
+  const container = document.getElementById('recipeList')
+  document.getElementById('dishCount').textContent = recipes.length + ' 道'
+  const avg = recipes.length ? (recipes.reduce((s, r) => s + r.rating, 0) / recipes.length).toFixed(1) : '--'
+  const cats = [...new Set(recipes.map(r => r.category))]
+  document.getElementById('stats').innerHTML =
+    `<span>⭐ 均分 <strong>${avg}</strong></span><span>📂 <strong>${cats.length}</strong> 类</span><span>📝 <strong>${recipes.length}</strong> 道菜</span>`
+  if (list.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="emoji">${recipes.length === 0 ? '🍽️' : '🔍'}</div><p>${recipes.length === 0 ? '还没有记录，添加第一道菜吧！' : '没有匹配的菜品'}</p></div>`
+    return
+  }
+  container.innerHTML = list.map(r => `
+    <div class="recipe-card">
+      <div class="card-header">
+        <div>
+          <div class="recipe-name">${esc(r.name)}</div>
+          <div class="recipe-meta"><span class="tag">${esc(r.category)}</span><span>${r.date || ''}</span></div>
+        </div>
+        <div class="stars">${starStr(r.rating)}</div>
+      </div>
+      ${r.notes ? `<div class="recipe-notes">${esc(r.notes)}</div>` : ''}
+      <div class="card-actions">
+        <button class="btn btn-sm" onclick="editRecipe('${r._id}','${esc(r.name)}','${esc(r.category)}','${r.rating}','${esc(r.date||'')}','${esc(r.notes||'')}')">✏️ 编辑</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteRecipe('${r._id}','${esc(r.name)}')">🗑️ 删除</button>
+      </div>
+    </div>
+  `).join('')
+}
+
+function updateUI() { render() }
+
+function randomPick() {
+  const list = getFilteredList()
+  if (list.length === 0) { showToast(recipes.length === 0 ? '🥲 还没菜呢' : '😅 没有匹配的'); return }
+  const picked = list[Math.floor(Math.random() * list.length)]
+  showToast(`🍳 ${picked.name} (${picked.category}) ${starStr(picked.rating)}`)
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast')
+  el.textContent = msg; el.classList.add('show')
+  clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.remove('show'), 2500)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 事件绑定
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('starSlider').addEventListener('input', function() {
+  document.getElementById('starPreview').textContent = starStr(parseInt(this.value))
+})
+
+document.getElementById('notesInput').addEventListener('input', function() {
+  this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'
+})
+
+document.getElementById('addBtn').addEventListener('click', addRecipe)
+document.getElementById('dishNameInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') addRecipe()
+})
+document.getElementById('filterSelect').addEventListener('change', function() {
+  currentFilter = this.value; render()
+})
+document.getElementById('searchInput').addEventListener('input', render)
+document.getElementById('sortSelect').addEventListener('change', render)
+document.getElementById('randomBtn').addEventListener('click', randomPick)
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditModal()
+})
+
+document.getElementById('dateInput').value = new Date().toISOString().slice(0, 10)
+
+initCloud()
 </script>
 </body>
 </html>
