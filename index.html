@@ -266,8 +266,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@cloudbase/js-sdk@1.14.0/dist/cloudbase.min.js"></script>
-<script>
+<script type="module">
+import cloudbase from "https://esm.run/@cloudbase/js-sdk@3.6.2"
 // ═══════════════════════════════════════════════════════════════
 // 配置 — 替换为你的腾讯云·云开发环境 ID
 // ═══════════════════════════════════════════════════════════════
@@ -537,6 +537,15 @@ document.getElementById('editModal').addEventListener('click', function(e) {
 document.getElementById('dateInput').value = new Date().toISOString().slice(0, 10)
 
 initCloud()
-</script>
+
+// ═══════════════════════════════════════════════════════════════
+// 导出函数给 HTML onclick 使用
+// ═══════════════════════════════════════════════════════════════
+window.addRecipe = addRecipe
+window.editRecipe = editRecipe
+window.deleteRecipe = deleteRecipe
+window.closeEditModal = closeEditModal
+window.randomPick = randomPick
+window.showToast = showToast</script>
 </body>
 </html>
