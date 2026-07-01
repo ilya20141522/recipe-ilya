@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
@@ -102,221 +102,175 @@
     transition: 0.15s;
   }
   .recipe-card:hover { border-color: #d8cdbc; }
-  .recipe-card .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .recipe-card .recipe-name { font-size: 1.1rem; font-weight: 600; color: #3e3a32; }
-  .recipe-card .recipe-meta { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 6px; font-size: 0.8rem; color: #8a7f72; }
-  .recipe-card .recipe-notes { font-size: 0.85rem; color: #5a5248; line-height: 1.5; margin: 6px 0 0; white-space: pre-wrap; }
-  .recipe-card .card-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
-  .recipe-card .card-actions .btn { font-size: 0.8rem; padding: 4px 12px; }
-  .tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; background: #ede7dd; color: #5a5248; }
-  .stars { color: #f5b342; font-size: 1rem; letter-spacing: 1px; }
+  .recipe-card .card-header {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  }
+  .recipe-name { font-weight: 600; font-size: 1.1rem; color: #2f2b26; margin-bottom: 4px; }
+  .recipe-meta { display: flex; gap: 8px; font-size: 0.8rem; color: #8a7f72; align-items: center; flex-wrap: wrap; }
+  .recipe-meta .tag {
+    background: #e8e0d5; padding: 2px 10px; border-radius: 20px;
+    color: #3e3a32; font-weight: 500; font-size: 0.75rem;
+  }
+  .stars { color: #f5b342; font-size: 1rem; letter-spacing: 1px; white-space: nowrap; }
+  .recipe-notes {
+    color: #6f6658; font-size: 0.85rem; margin: 8px 0 0 0;
+    padding: 8px 0 0 0; border-top: 1px dashed #ede7dd;
+  }
+  .card-actions { display: flex; gap: 6px; margin-top: 10px; }
 
-  .empty-state { text-align: center; padding: 50px 20px; color: #8a7f72; }
+  .empty-state { text-align: center; padding: 40px 20px; color: #b3a89a; }
   .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
-  .empty-state p { font-size: 0.95rem; }
+  .empty-state p { font-size: 1rem; }
+
+  #toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: #3e3a32; color: #fcf9f4; padding: 12px 28px;
+    border-radius: 60px; font-size: 0.95rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    opacity: 0; transition: 0.3s; pointer-events: none; z-index: 999;
+    white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis;
+  }
+  #toast.show { opacity: 1; }
 
   .modal-overlay {
-    display: none; position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.3); backdrop-filter: blur(3px);
-    align-items: center; justify-content: center; padding: 20px;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+    opacity: 0; pointer-events: none; transition: 0.2s;
   }
-  .modal-overlay.show { display: flex; }
-  .modal {
-    background: #fcf9f4; border-radius: 32px; padding: 28px 24px;
-    max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid #ede7dd;
-    animation: modalIn 0.2s ease;
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: #fcf9f4; border-radius: 32px; padding: 24px;
+    width: 90%; max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
   }
-  @keyframes modalIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .modal h2 { font-size: 1.4rem; color: #3e3a32; margin-bottom: 20px; }
-  .modal .field { margin-bottom: 14px; }
-  .modal label { display: block; font-size: 0.85rem; font-weight: 500; color: #5a5248; margin-bottom: 4px; }
-  .modal input, .modal select, .modal textarea { width: 100%; padding: 10px 14px; border: 1px solid #d9d0c2; border-radius: 16px; font-size: 0.95rem; font-family: inherit; background: white; }
-  .modal input:focus, .modal select:focus, .modal textarea:focus { outline: none; border-color: #b8a48c; box-shadow: 0 0 0 3px rgba(184,164,140,0.2); }
-  .modal textarea { resize: vertical; min-height: 80px; }
-  .modal .btn-group { display: flex; gap: 10px; margin-top: 18px; }
-  .modal .btn-group .btn { flex: 1; justify-content: center; }
-
-  @media (max-width: 500px) {
-    body { padding: 12px; }
-    .app-container { border-radius: 28px; padding: 18px 14px 24px; }
-    h1 { font-size: 1.6rem; }
-    .add-section { padding: 14px; }
-    .add-row input, .add-row select { flex-basis: 100%; }
-    .star-selector { flex: 1 1 auto; }
+  .modal-box h3 { margin-bottom: 16px; color: #3e3a32; }
+  .modal-box .form-row { margin-bottom: 12px; }
+  .modal-box .form-row label { display: block; font-size: 0.85rem; color: #6f6658; margin-bottom: 4px; }
+  .modal-box .form-row input, .modal-box .form-row select, .modal-box .form-row textarea {
+    width: 100%; padding: 10px 14px; border: 1px solid #d9d0c2; border-radius: 60px;
+    background: white; font-size: 0.9rem; outline: none; color: #2f2b26;
   }
-
-  .toast {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-    background: #3e3a32; color: #fcf9f4; padding: 10px 24px;
-    border-radius: 60px; font-size: 0.9rem; z-index: 200;
-    opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
-  }
-  .toast.show { opacity: 1; }
-
-  .config-hint {
-    display: none;
-    background: #fff3cd; border: 1px solid #ffc107; border-radius: 12px;
-    padding: 14px 16px; margin-bottom: 16px; font-size: 0.85rem; color: #664d03;
-  }
-  .config-hint strong { display: block; margin-bottom: 4px; }
+  .modal-box .form-row textarea { border-radius: 16px; min-height: 60px; resize: vertical; }
+  .modal-box .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
 </style>
 </head>
 <body>
-
 <div class="app-container">
-  <h1>🍳 私房菜谱 <small id="dishCount">0 道</small></h1>
-
+  <h1>🍳 私房菜谱 <small>记录器</small></h1>
   <div class="subhead">
-    <span>记录你的拿手好菜，想不起来做什么就点一下 ✨</span>
-    <span class="sync-status" id="syncStatus">
-      <span class="dot" id="syncDot"></span>
-      <span id="syncText">同步中...</span>
+    <span>记录你做过的每一道菜</span>
+    <span class="sync-status">
+      <span class="dot gray" id="syncDot"></span>
+      <span id="syncText">连接中...</span>
     </span>
-  </div>
-
-  <div class="config-hint" id="configHint">
-    <strong>🔧 配置提示</strong>
-    如需使用云数据库，请先在 <code>index.html</code> 中替换 <code>CLOUD_ENV_ID</code> 为你的腾讯云环境 ID。
   </div>
 
   <div class="add-section">
     <div class="add-row">
-      <input type="text" id="dishNameInput" placeholder="菜名（必填）" maxlength="50">
+      <input id="dishNameInput" placeholder="菜名（如：番茄炒蛋）" autocomplete="off">
       <select id="categorySelect">
         <option value="荤菜">荤菜</option>
-          <option value="素菜">素菜</option>
-          <option value="汤类">汤类</option>
-          <option value="主食">主食</option>
-          <option value="其他">其他</option>
+        <option value="素菜">素菜</option>
+        <option value="汤类">汤类</option>
+        <option value="主食">主食</option>
+        <option value="其他" selected>其他</option>
       </select>
       <div class="star-selector">
         <label>⭐</label>
-        <span class="stars-display" id="starPreview">★★★☆☆</span>
-        <input type="range" id="starSlider" min="1" max="5" value="3" step="1">
+        <span class="stars-display" id="starPreview">⭐⭐⭐</span>
+        <input type="range" id="starSlider" min="0" max="5" value="3">
       </div>
-      <textarea id="notesInput" placeholder="备注（做法／食材／心得...）" rows="1"></textarea>
-      <input type="date" id="dateInput">
-      <button class="btn btn-primary" id="addBtn">＋ 添加</button>
+    </div>
+    <div class="add-row" style="margin-top:10px">
+      <textarea id="notesInput" placeholder="备注（可选）" style="flex-basis:100%;border-radius:16px;min-height:50px;resize:vertical;padding:10px 14px;border:1px solid #d9d0c2;background:white;font-size:0.9rem;outline:none;color:#2f2b26;font-family:inherit"></textarea>
+      <input id="dateInput" type="date">
+      <button class="btn btn-primary" id="addBtn">➕ 添加</button>
+      <button class="btn" id="randomBtn">🎲 随便吃</button>
     </div>
   </div>
 
   <div class="toolbar">
-    <input type="text" id="searchInput" placeholder="🔍 搜索菜品...">
+    <input id="searchInput" placeholder="🔍 搜索菜名..." autocomplete="off">
     <select id="filterSelect">
       <option value="全部">全部</option>
       <option value="荤菜">荤菜</option>
       <option value="素菜">素菜</option>
       <option value="汤类">汤类</option>
       <option value="主食">主食</option>
-      <option value="其他" selected>其他</option>
+      <option value="其他">其他</option>
     </select>
     <select id="sortSelect">
-      <option value="newest">最新</option>
-      <option value="oldest">最早</option>
-      <option value="rating">评分⬇</option>
-      <option value="name">菜名</option>
+      <option value="newest">最新优先</option>
+      <option value="oldest">最早优先</option>
+      <option value="name">按菜名</option>
+      <option value="rating">评分最高</option>
     </select>
-    <button class="btn btn-sm" id="randomBtn">🎲 随机选</button>
   </div>
 
   <div class="stats" id="stats"></div>
-  <div class="recipe-list" id="recipeList"></div>
-
-  <!-- Edit Modal -->
-  <div class="modal-overlay" id="editModal">
-    <div class="modal">
-      <h2 id="modalTitle">编辑菜品</h2>
-      <form id="editForm">
-        <div class="field">
-          <label>菜名 *</label>
-          <input type="text" id="editName" required maxlength="50">
-        </div>
-        <div class="field">
-          <label>类型</label>
-          <select id="editCategory">
-            <option value="荤菜">荤菜</option>
-      <option value="素菜">素菜</option>
-      <option value="汤类">汤类</option>
-      <option value="主食">主食</option>
-      <option value="其他" selected>其他</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>评分</label>
-          <select id="editRating">
-            <option value="5">⭐⭐⭐⭐⭐</option>
-            <option value="4">⭐⭐⭐⭐</option>
-            <option value="3" selected>⭐⭐⭐</option>
-            <option value="2">⭐⭐</option>
-            <option value="1">⭐</option>
-          </select>
-        </div>
-        <div class="field"><label>日期</label><input type="date" id="editDate"></div>
-        <div class="field"><label>备注</label><textarea id="editNotes" rows="3"></textarea></div>
-        <input type="hidden" id="editId">
-        <div class="btn-group">
-          <button type="button" class="btn" onclick="closeEditModal()">取消</button>
-          <button type="submit" class="btn btn-primary">保存</button>
-        </div>
-      </form>
-    </div>
+  <div class="recipe-list" id="recipeList">
+    <div class="empty-state"><div class="emoji">🍳</div><p>加载中...</p></div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="toast"></div>
 
-<script type="module">
-import cloudbase from "https://esm.run/@cloudbase/js-sdk@3.6.2"
-// ═══════════════════════════════════════════════════════════════
-// 配置 — 替换为你的腾讯云·云开发环境 ID
-// ═══════════════════════════════════════════════════════════════
-const CLOUD_ENV_ID = 'ilya-d7gcuc0w2c32f528f'
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <h3 id="modalTitle">编辑菜品</h3>
+    <form id="editForm">
+      <input type="hidden" id="editId">
+      <div class="form-row">
+        <label>菜名</label>
+        <input id="editName" required>
+      </div>
+      <div class="form-row">
+        <label>类型</label>
+        <select id="editCategory">
+          <option value="荤菜">荤菜</option>
+          <option value="素菜">素菜</option>
+          <option value="汤类">汤类</option>
+          <option value="主食">主食</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>评分（0-5）</label>
+        <input type="range" id="editRating" min="0" max="5" value="3">
+      </div>
+      <div class="form-row">
+        <label>日期</label>
+        <input type="date" id="editDate">
+      </div>
+      <div class="form-row">
+        <label>备注</label>
+        <textarea id="editNotes"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" onclick="closeEditModal()">取消</button>
+        <button type="submit" class="btn btn-primary">💾 保存</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-// ═══════════════════════════════════════════════════════════════
-// 初始化 CloudBase
-// ═══════════════════════════════════════════════════════════════
-let cloudApp = null
-let isCloudReady = false
+<script>
+const API_BASE = 'https://ilya-d7gcuc0w2c32f528f-1424348947.ap-shanghai.app.tcloudbase.com/recipe-api'
 
-async function initCloud() {
-  setSyncStatus('yellow', '连接中...')
-  try {
-    cloudApp = cloudbase.init({ env: CLOUD_ENV_ID })
-    await cloudApp.auth().signInAnonymously()
-    isCloudReady = true
-    setSyncStatus('green', '☁️ 已连接')
-    await loadFromCloud()
-  } catch (err) {
-    console.error('Cloud init error:', err)
-    setSyncStatus('gray', '离线模式')
-    loadFromLocal()
-  }
-}
-
-function setSyncStatus(color, text) {
-  document.getElementById('syncDot').className = 'dot ' + color
-  document.getElementById('syncText').textContent = text
-}
-
-// ═══════════════════════════════════════════════════════════════
-// 调用云函数
-// ═══════════════════════════════════════════════════════════════
 async function callFn(data) {
-  if (!isCloudReady) throw new Error('Cloud not ready')
-  const res = await cloudApp.callFunction({ name: 'recipe-api', data })
-  if (res && res.result) {
-    if (res.result.error) throw new Error(res.result.error)
-    return res.result
-  }
-  return res
+  const res = await fetch(API_BASE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  const json = await res.json()
+  if (json.error) throw new Error(json.error)
+  return json
 }
 
-// ═══════════════════════════════════════════════════════════════
-// 数据层
-// ═══════════════════════════════════════════════════════════════
 let recipes = []
-const STORAGE_KEY = 'recipe_book_pg'
+const STORAGE_KEY = 'recipe_book_cloud'
 
 function loadFromLocal() {
   try { recipes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { recipes = [] }
@@ -328,6 +282,7 @@ function saveToLocal() {
 }
 
 async function loadFromCloud() {
+  setSyncStatus('connecting')
   try {
     const result = await callFn({ action: 'list' })
     if (result && result.data) {
@@ -342,50 +297,71 @@ async function loadFromCloud() {
       }))
       saveToLocal()
       updateUI()
+      setSyncStatus('connected')
     } else {
       loadFromLocal()
+      setSyncStatus('local')
     }
   } catch (err) {
     console.error('Cloud load error:', err)
     loadFromLocal()
+    setSyncStatus('local')
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// CRUD
-// ═══════════════════════════════════════════════════════════════
+function setSyncStatus(status) {
+  const dot = document.getElementById('syncDot')
+  const text = document.getElementById('syncText')
+  if (status === 'connected') {
+    dot.className = 'dot green'
+    text.textContent = '☁️ 已连接'
+  } else if (status === 'connecting') {
+    dot.className = 'dot yellow'
+    text.textContent = '连接中...'
+  } else {
+    dot.className = 'dot gray'
+    text.textContent = '📁 本地模式'
+  }
+}
+
 async function addRecipe() {
   const name = document.getElementById('dishNameInput').value.trim()
   if (!name) { showToast('请输入菜名 🥺'); return }
-  if (recipes.some(r => r.name === name && r.category === document.getElementById('categorySelect').value)) {
-    showToast(`"${name}" 已存在`)
-    return
-  }
 
   const category = document.getElementById('categorySelect').value
   const rating = parseInt(document.getElementById('starSlider').value)
-  const notes = document.getElementById('notesInput').value.trim()
+  const notes = document.getElementById('notesInput') ? document.getElementById('notesInput').value.trim() : ''
   const date = document.getElementById('dateInput').value
-
   const recipe = { name, category, rating, notes, date, createdAt: Date.now() }
 
-  // 云端写入
-  if (isCloudReady) {
-    try {
-      const result = await callFn({ action: 'add', name, category, rating, notes, date })
-      if (result && result.id) recipe._id = result.id
-    } catch (err) {
-      showToast('云端写入失败，已存到本地')
-    }
+  try {
+    const result = await callFn({ action: 'add', name, category, rating, notes, date })
+    if (result && result.id) recipe._id = result.id
+    setSyncStatus('connected')
+  } catch (err) {
+    console.warn('云端写入失败，已存到本地')
+    setSyncStatus('local')
   }
 
   recipes.push(recipe)
   saveToLocal()
   updateUI()
   document.getElementById('dishNameInput').value = ''
-  document.getElementById('notesInput').value = ''
   document.getElementById('dishNameInput').focus()
   showToast('✅ 已添加！')
+}
+
+async function deleteRecipe(id, name) {
+  if (!confirm(`确定要删除 "${name}" 吗？`)) return
+  try {
+    await callFn({ action: 'delete', id })
+  } catch (err) {
+    console.warn('云端删除失败')
+  }
+  recipes = recipes.filter(r => r._id != id)
+  saveToLocal()
+  updateUI()
+  showToast('🗑️ 已删除')
 }
 
 function editRecipe(id, name, category, rating, date, notes) {
@@ -395,7 +371,7 @@ function editRecipe(id, name, category, rating, date, notes) {
   document.getElementById('editRating').value = rating
   document.getElementById('editDate').value = date
   document.getElementById('editNotes').value = notes
-  document.getElementById('modalTitle').textContent = '✏️ 编辑 ' + name
+  document.getElementById('modalTitle').textContent = '编辑：' + name
   document.getElementById('editModal').classList.add('show')
 }
 
@@ -407,47 +383,36 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
   e.preventDefault()
   const id = document.getElementById('editId').value
   const name = document.getElementById('editName').value.trim()
-  if (!name) { showToast('请输入菜名 🥺'); return }
-
   const category = document.getElementById('editCategory').value
   const rating = parseInt(document.getElementById('editRating').value)
   const date = document.getElementById('editDate').value
   const notes = document.getElementById('editNotes').value.trim()
+  if (!name) { showToast('请输入菜名'); return }
 
-  if (isCloudReady && id) {
-    try {
-      await callFn({ action: 'update', id: parseInt(id), name, category, rating, notes, date })
-    } catch (err) { console.error('Update error:', err) }
+  try {
+    await callFn({ action: 'update', id, name, category, rating, notes, date })
+  } catch (err) {
+    console.warn('云端更新失败')
   }
 
   const idx = recipes.findIndex(r => r._id == id)
-  if (idx !== -1) { recipes[idx] = { ...recipes[idx], name, category, rating, notes, date } }
-  saveToLocal()
-  updateUI()
+  if (idx !== -1) {
+    recipes[idx] = { ...recipes[idx], name, category, rating, notes, date }
+    saveToLocal()
+    updateUI()
+  }
   closeEditModal()
   showToast('✅ 已更新')
 })
 
-async function deleteRecipe(id, name) {
-  if (!confirm(`确定要删除 "${name}" 吗？`)) return
-  if (isCloudReady && id) {
-    try { await callFn({ action: 'delete', id: parseInt(id) }) } catch {}
-  }
-  recipes = recipes.filter(r => r._id != id)
-  saveToLocal()
-  updateUI()
-  showToast('🗑️ 已删除')
+let currentFilter = '全部'
+let currentSort = 'newest'
+
+function starStr(n) {
+  return '★'.repeat(n) + '☆'.repeat(5 - n)
 }
 
-// ═══════════════════════════════════════════════════════════════
-// UI 渲染
-// ═══════════════════════════════════════════════════════════════
-let currentFilter = '全部'
-
-function starStr(n) { return '★'.repeat(n) + '☆'.repeat(5 - n) }
-
 function esc(s) {
-  if (!s) return ''
   const d = document.createElement('div'); d.textContent = s; return d.innerHTML
 }
 
@@ -459,8 +424,8 @@ function getFilteredList() {
   const sort = document.getElementById('sortSelect').value
   if (sort === 'newest') list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
   else if (sort === 'oldest') list.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
-  else if (sort === 'rating') list.sort((a, b) => b.rating - a.rating)
   else if (sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name))
+  else if (sort === 'rating') list.sort((a, b) => (b.rating || 0) - (a.rating || 0))
   return list
 }
 
@@ -468,14 +433,17 @@ function render() {
   const list = getFilteredList()
   const container = document.getElementById('recipeList')
   document.getElementById('dishCount').textContent = recipes.length + ' 道'
+
   const avg = recipes.length ? (recipes.reduce((s, r) => s + r.rating, 0) / recipes.length).toFixed(1) : '--'
   const cats = [...new Set(recipes.map(r => r.category))]
   document.getElementById('stats').innerHTML =
     `<span>⭐ 均分 <strong>${avg}</strong></span><span>📂 <strong>${cats.length}</strong> 类</span><span>📝 <strong>${recipes.length}</strong> 道菜</span>`
+
   if (list.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="emoji">${recipes.length === 0 ? '🍽️' : '🔍'}</div><p>${recipes.length === 0 ? '还没有记录，添加第一道菜吧！' : '没有匹配的菜品'}</p></div>`
+    container.innerHTML = `<div class="empty-state"><div class="emoji">${recipes.length === 0 ? '🍳✨' : '🔍'}</div><p>${recipes.length === 0 ? '还没有记录，添加第一道菜吧！' : '没有匹配的菜哦'}</p></div>`
     return
   }
+
   container.innerHTML = list.map(r => `
     <div class="recipe-card">
       <div class="card-header">
@@ -498,7 +466,7 @@ function updateUI() { render() }
 
 function randomPick() {
   const list = getFilteredList()
-  if (list.length === 0) { showToast(recipes.length === 0 ? '🥲 还没菜呢' : '😅 没有匹配的'); return }
+  if (list.length === 0) { showToast(recipes.length === 0 ? '🎲 还没菜呢' : '😅 没有匹配的'); return }
   const picked = list[Math.floor(Math.random() * list.length)]
   showToast(`🍳 ${picked.name} (${picked.category}) ${starStr(picked.rating)}`)
 }
@@ -509,15 +477,8 @@ function showToast(msg) {
   clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.remove('show'), 2500)
 }
 
-// ═══════════════════════════════════════════════════════════════
-// 事件绑定
-// ═══════════════════════════════════════════════════════════════
 document.getElementById('starSlider').addEventListener('input', function() {
   document.getElementById('starPreview').textContent = starStr(parseInt(this.value))
-})
-
-document.getElementById('notesInput').addEventListener('input', function() {
-  this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'
 })
 
 document.getElementById('addBtn').addEventListener('click', addRecipe)
@@ -536,16 +497,14 @@ document.getElementById('editModal').addEventListener('click', function(e) {
 
 document.getElementById('dateInput').value = new Date().toISOString().slice(0, 10)
 
-initCloud()
+loadFromCloud()
 
-// ═══════════════════════════════════════════════════════════════
-// 导出函数给 HTML onclick 使用
-// ═══════════════════════════════════════════════════════════════
 window.addRecipe = addRecipe
 window.editRecipe = editRecipe
 window.deleteRecipe = deleteRecipe
 window.closeEditModal = closeEditModal
 window.randomPick = randomPick
-window.showToast = showToast</script>
+window.showToast = showToast
+</script>
 </body>
 </html>
