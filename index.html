@@ -255,25 +255,19 @@
   </div>
 </div>
 
-<script>
-const API_BASE = 'https://ilya-d7gcuc0w2c32f528f-1424348947.ap-shanghai.app.tcloudbase.com/recipe-api'
+<script type="module">
+import { CloudBase } from 'https://esm.run/@cloudbase/js-sdk@3.6.2'
+
+const cloudApp = CloudBase.init({ env: 'ilya-d7gcuc0w2c32f528f' })
+const FN_NAME = 'recipe-api'
 
 async function callFn(data) {
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 8000)
-  try {
-    const res = await fetch(API_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-      signal: controller.signal
-    })
-    const json = await res.json()
-    if (json.error) throw new Error(json.error)
-    return json
-  } finally {
-    clearTimeout(timeout)
+  const res = await cloudApp.callFunction({ name: FN_NAME, data })
+  if (res && res.result) {
+    if (res.result.error) throw new Error(res.result.error)
+    return res.result
   }
+  throw new Error('Empty response')
 }
 
 let recipes = []
@@ -294,13 +288,8 @@ async function loadFromCloud() {
     const result = await callFn({ action: 'list' })
     if (result && result.data) {
       recipes = result.data.map(r => ({
-        _id: r.id,
-        name: r.name,
-        category: r.category,
-        rating: r.rating,
-        notes: r.notes || '',
-        date: r.date || '',
-        createdAt: r.created_at
+        _id: r.id, name: r.name, category: r.category, rating: r.rating,
+        notes: r.notes || '', date: r.date || '', createdAt: r.created_at
       }))
       saveToLocal()
       updateUI()
@@ -321,54 +310,48 @@ function setSyncStatus(status) {
   const text = document.getElementById('syncText')
   if (status === 'connected') {
     dot.className = 'dot green'
-    text.textContent = '☁️ 已连接'
+    text.textContent = '\u2601\ufe0f \u5df2\u8fde\u63a5'
   } else if (status === 'connecting') {
     dot.className = 'dot yellow'
-    text.textContent = '连接中...'
+    text.textContent = '\u8fde\u63a5\u4e2d...'
   } else {
     dot.className = 'dot gray'
-    text.textContent = '📁 本地模式'
+    text.textContent = '\U0001F4C1 \u672c\u5730\u6a21\u5f0f'
   }
 }
 
 async function addRecipe() {
   const name = document.getElementById('dishNameInput').value.trim()
-  if (!name) { showToast('请输入菜名 🥺'); return }
-
+  if (!name) { showToast('\u8bf7\u8f93\u5165\u83dc\u540d \U0001F97A'); return }
   const category = document.getElementById('categorySelect').value
   const rating = parseInt(document.getElementById('starSlider').value)
   const notes = document.getElementById('notesInput') ? document.getElementById('notesInput').value.trim() : ''
   const date = document.getElementById('dateInput').value
   const recipe = { name, category, rating, notes, date, createdAt: Date.now() }
-
   try {
     const result = await callFn({ action: 'add', name, category, rating, notes, date })
     if (result && result.id) recipe._id = result.id
     setSyncStatus('connected')
   } catch (err) {
-    console.warn('云端写入失败，已存到本地')
+    console.warn('\u4e91\u7aef\u5199\u5165\u5931\u8d25\uff0c\u5df2\u5b58\u5230\u672c\u5730')
     setSyncStatus('local')
   }
-
   recipes.push(recipe)
   saveToLocal()
   updateUI()
   document.getElementById('dishNameInput').value = ''
   document.getElementById('dishNameInput').focus()
-  showToast('✅ 已添加！')
+  showToast('\u2705 \u5df2\u6dfb\u52a0\uff01')
 }
 
 async function deleteRecipe(id, name) {
-  if (!confirm(`确定要删除 "${name}" 吗？`)) return
-  try {
-    await callFn({ action: 'delete', id })
-  } catch (err) {
-    console.warn('云端删除失败')
-  }
+  if (!confirm('\u786e\u5b9a\u8981\u5220\u9664 "' + name + '" \u5417\uff1f')) return
+  try { await callFn({ action: 'delete', id }) }
+  catch (err) { console.warn('\u4e91\u7aef\u5220\u9664\u5931\u8d25') }
   recipes = recipes.filter(r => r._id != id)
   saveToLocal()
   updateUI()
-  showToast('🗑️ 已删除')
+  showToast('\U0001F5D1\ufe0f \u5df2\u5220\u9664')
 }
 
 function editRecipe(id, name, category, rating, date, notes) {
@@ -378,7 +361,7 @@ function editRecipe(id, name, category, rating, date, notes) {
   document.getElementById('editRating').value = rating
   document.getElementById('editDate').value = date
   document.getElementById('editNotes').value = notes
-  document.getElementById('modalTitle').textContent = '编辑：' + name
+  document.getElementById('modalTitle').textContent = '\u7f16\u8f91\uff1a' + name
   document.getElementById('editModal').classList.add('show')
 }
 
@@ -394,39 +377,26 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
   const rating = parseInt(document.getElementById('editRating').value)
   const date = document.getElementById('editDate').value
   const notes = document.getElementById('editNotes').value.trim()
-  if (!name) { showToast('请输入菜名'); return }
-
-  try {
-    await callFn({ action: 'update', id, name, category, rating, notes, date })
-  } catch (err) {
-    console.warn('云端更新失败')
-  }
-
+  if (!name) { showToast('\u8bf7\u8f93\u5165\u83dc\u540d'); return }
+  try { await callFn({ action: 'update', id, name, category, rating, notes, date }) }
+  catch (err) { console.warn('\u4e91\u7aef\u66f4\u65b0\u5931\u8d25') }
   const idx = recipes.findIndex(r => r._id == id)
-  if (idx !== -1) {
-    recipes[idx] = { ...recipes[idx], name, category, rating, notes, date }
-    saveToLocal()
-    updateUI()
-  }
+  if (idx !== -1) { recipes[idx] = { ...recipes[idx], name, category, rating, notes, date }; saveToLocal(); updateUI() }
   closeEditModal()
-  showToast('✅ 已更新')
+  showToast('\u2705 \u5df2\u66f4\u65b0')
 })
 
-let currentFilter = '全部'
+let currentFilter = '\u5168\u90e8'
 let currentSort = 'newest'
 
-function starStr(n) {
-  return '★'.repeat(n) + '☆'.repeat(5 - n)
-}
+function starStr(n) { return '\u2605'.repeat(n) + '\u2606'.repeat(5 - n) }
 
-function esc(s) {
-  const d = document.createElement('div'); d.textContent = s; return d.innerHTML
-}
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML }
 
 function getFilteredList() {
   const search = document.getElementById('searchInput').value.trim().toLowerCase()
   let list = [...recipes]
-  if (currentFilter !== '全部') list = list.filter(r => r.category === currentFilter)
+  if (currentFilter !== '\u5168\u90e8') list = list.filter(r => r.category === currentFilter)
   if (search) list = list.filter(r => r.name.toLowerCase().includes(search))
   const sort = document.getElementById('sortSelect').value
   if (sort === 'newest') list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
@@ -439,43 +409,50 @@ function getFilteredList() {
 function render() {
   const list = getFilteredList()
   const container = document.getElementById('recipeList')
-  document.getElementById('dishCount').textContent = recipes.length + ' 道'
-
   const avg = recipes.length ? (recipes.reduce((s, r) => s + r.rating, 0) / recipes.length).toFixed(1) : '--'
   const cats = [...new Set(recipes.map(r => r.category))]
-  document.getElementById('stats').innerHTML =
-    `<span>⭐ 均分 <strong>${avg}</strong></span><span>📂 <strong>${cats.length}</strong> 类</span><span>📝 <strong>${recipes.length}</strong> 道菜</span>`
-
+  document.getElementById('stats').innerHTML = '<span>⭐ 均分 <strong>' + avg + '</strong></span><span>📂 <strong>' + cats.length + '</strong> 类</span><span>📝 <strong>' + recipes.length + '</strong> 道菜</span>'
   if (list.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="emoji">${recipes.length === 0 ? '🍳✨' : '🔍'}</div><p>${recipes.length === 0 ? '还没有记录，添加第一道菜吧！' : '没有匹配的菜哦'}</p></div>`
+    container.innerHTML = '<div class="empty-state"><div class="emoji">' + (recipes.length === 0 ? '🍳✨' : '🔍') + '</div><p>' + (recipes.length === 0 ? '还没有记录，添加第一道菜吧！' : '没有匹配的菜哦') + '</p></div>'
     return
   }
+  container.innerHTML = list.map(function(r) {
+    return '<div class="recipe-card" data-id="' + r._id + '" data-name="' + esc(r.name).replace(/"/g, "&quot;") + '" data-category="' + esc(r.category) + '" data-rating="' + r.rating + '" data-date="' + esc(r.date || "") + '" data-notes="' + esc(r.notes || "").replace(/"/g, "&quot;") + '">' +
+      '<div class="card-header"><div><div class="recipe-name">' + esc(r.name) + '</div><div class="recipe-meta"><span class="tag">' + esc(r.category) + '</span><span>' + esc(r.date || "") + '</span></div></div><div class="stars">' + starStr(r.rating) + '</div></div>' +
+      (r.notes ? '<div class="recipe-notes">' + esc(r.notes) + '</div>' : "") +
+      '<div class="card-actions">' +
+        '<button class="btn btn-sm edit-btn">✏️ 编辑</button>' +
+        '<button class="btn btn-sm btn-danger delete-btn">🗑️ 删除</button>' +
+      '</div></div>'
+  }).join("")
 
-  container.innerHTML = list.map(r => `
-    <div class="recipe-card">
-      <div class="card-header">
-        <div>
-          <div class="recipe-name">${esc(r.name)}</div>
-          <div class="recipe-meta"><span class="tag">${esc(r.category)}</span><span>${r.date || ''}</span></div>
-        </div>
-        <div class="stars">${starStr(r.rating)}</div>
-      </div>
-      ${r.notes ? `<div class="recipe-notes">${esc(r.notes)}</div>` : ''}
-      <div class="card-actions">
-        <button class="btn btn-sm" onclick="editRecipe('${r._id}','${esc(r.name)}','${esc(r.category)}','${r.rating}','${esc(r.date||'')}','${esc(r.notes||'')}')">✏️ 编辑</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteRecipe('${r._id}','${esc(r.name)}')">🗑️ 删除</button>
-      </div>
-    </div>
-  `).join('')
+  // Attach event listeners using delegation on the container
+  container.querySelectorAll(".edit-btn").forEach(function(btn) {
+    btn.onclick = function() {
+      var card = this.closest(".recipe-card")
+      var id = card.dataset.id
+      var name = card.dataset.name
+      var category = card.dataset.category
+      var rating = parseInt(card.dataset.rating)
+      var date = card.dataset.date
+      var notes = card.dataset.notes
+      editRecipe(id, name, category, rating, date, notes)
+    }
+  })
+  container.querySelectorAll(".delete-btn").forEach(function(btn) {
+    btn.onclick = function() {
+      var card = this.closest(".recipe-card")
+      deleteRecipe(card.dataset.id, card.dataset.name)
+    }
+  })
 }
-
 function updateUI() { render() }
 
 function randomPick() {
   const list = getFilteredList()
-  if (list.length === 0) { showToast(recipes.length === 0 ? '🎲 还没菜呢' : '😅 没有匹配的'); return }
+  if (list.length === 0) { showToast(recipes.length === 0 ? '\U0001F3B2 \u8fd8\u6ca1\u83dc\u5462' : '\U0001F605 \u6ca1\u6709\u5339\u914d\u7684'); return }
   const picked = list[Math.floor(Math.random() * list.length)]
-  showToast(`🍳 ${picked.name} (${picked.category}) ${starStr(picked.rating)}`)
+  showToast('\U0001F373 ' + picked.name + ' (' + picked.category + ') ' + starStr(picked.rating))
 }
 
 function showToast(msg) {
@@ -487,23 +464,16 @@ function showToast(msg) {
 document.getElementById('starSlider').addEventListener('input', function() {
   document.getElementById('starPreview').textContent = starStr(parseInt(this.value))
 })
-
 document.getElementById('addBtn').addEventListener('click', addRecipe)
 document.getElementById('dishNameInput').addEventListener('keypress', function(e) {
   if (e.key === 'Enter') addRecipe()
 })
-document.getElementById('filterSelect').addEventListener('change', function() {
-  currentFilter = this.value; render()
-})
+document.getElementById('filterSelect').addEventListener('change', function() { currentFilter = this.value; render() })
 document.getElementById('searchInput').addEventListener('input', render)
 document.getElementById('sortSelect').addEventListener('change', render)
 document.getElementById('randomBtn').addEventListener('click', randomPick)
-document.getElementById('editModal').addEventListener('click', function(e) {
-  if (e.target === this) closeEditModal()
-})
-
+document.getElementById('editModal').addEventListener('click', function(e) { if (e.target === this) closeEditModal() })
 document.getElementById('dateInput').value = new Date().toISOString().slice(0, 10)
-
 loadFromCloud()
 
 window.addRecipe = addRecipe
