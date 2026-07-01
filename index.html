@@ -259,14 +259,21 @@
 const API_BASE = 'https://ilya-d7gcuc0w2c32f528f-1424348947.ap-shanghai.app.tcloudbase.com/recipe-api'
 
 async function callFn(data) {
-  const res = await fetch(API_BASE, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  })
-  const json = await res.json()
-  if (json.error) throw new Error(json.error)
-  return json
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 8000)
+  try {
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: controller.signal
+    })
+    const json = await res.json()
+    if (json.error) throw new Error(json.error)
+    return json
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 let recipes = []
