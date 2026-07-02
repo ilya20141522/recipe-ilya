@@ -295,7 +295,7 @@ function saveToLocal() {
 }
 
 async function 
-document.getElementByIddocument.getElementById('dateInput').value = new Date().toISOString().slice(0, 10)
+document.getElementById('dateInput').value = new Date().toISOString().slice(0, 10)
 loadFromCloud() {
   setSyncStatus('connecting')
   try {
