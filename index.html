@@ -294,9 +294,9 @@ function saveToLocal() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes)) } catch {}
 }
 
-async function 
+async function loadFromCloud()
 document.getElementById('dateInput').value = new Date().toISOString().slice(0, 10)
-loadFromCloud() {
+ {
   setSyncStatus('connecting')
   try {
     const result = await callFn({ action: 'list' })
