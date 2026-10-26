@@ -1,0 +1,67 @@
+#! /bin/bash
+export NODE_PATH=/var/user/node_modules
+/var/user/node_modules/.bin/node -e "
+const http = require('http');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.PG_CONNECTION_STRING
+});
+
+const server = http.createServer(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  let body = '';
+  req.on('data', chunk => body += chunk);
+  req.on('end', async () => {
+    try {
+      const params = body ? JSON.parse(body) : {};
+      const action = params.action;
+
+      if (action === 'list') {
+        const result = await pool.query('SELECT * FROM dishes ORDER BY created_at DESC');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ data: result.rows }));
+      } else if (action === 'add') {
+        const { name, category, rating, notes, date } = params;
+        if (!name) throw new Error('name is required');
+        const result = await pool.query(
+          'INSERT INTO dishes (name,category,rating,notes,date,created_at) VALUES (\$1,\$2,\$3,\$4,\$5,\$6) RETURNING id',
+          [name, category || '??', rating || 3, notes || '', date || '', Date.now()]
+        );
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ id: result.rows[0].id }));
+      } else if (action === 'update') {
+        const { id, name, category, rating, notes, date } = params;
+        await pool.query(
+          'UPDATE dishes SET name=\$1,category=\$2,rating=\$3,notes=\$4,date=\$5 WHERE id=\$6',
+          [name, category, rating, notes, date, id]
+        );
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } else if (action === 'delete') {
+        const { id } = params;
+        await pool.query('DELETE FROM dishes WHERE id=\$1', [id]);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } else {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Unknown action' }));
+      }
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+  });
+});
+
+server.listen(9000);
+" 2>&1

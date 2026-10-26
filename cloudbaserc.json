@@ -1,0 +1,16 @@
+{
+  "version": "3.0",
+  "envId": "ilya-d7gcuc0w2c32f528f",
+  "functionRoot": "functions",
+  "functions": [
+    {
+      "name": "recipe-api",
+      "timeout": 15,
+      "memorySize": 256,
+      "installDependency": true,
+      "envVariables": {
+        "PG_CONNECTION_STRING": "postgresql://cloudbase_admin:Abc...123@sh-postgres-h3exd42s.sql.tencentcdb.com:28677/ilya"
+      }
+    }
+  ]
+}
